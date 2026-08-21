@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  YAHAN SIRF wo strings hain jo ANDROID ko chahiye (launcher label, notification channel).
+
+  Baaki saari UI strings Kotlin mein hain (core/Strings.kt) — res/values-hi mein NAHI.
+  KYUN: app mein apna Hindi/English toggle hai (BUILD_PLAN section 2 ka locked feature).
+  Android ka res-qualifier system phone ki LOCALE dekhta hai, app ke toggle ko nahi —
+  usse user turant bhasha nahi badal sakta (activity recreate karni padti hai).
+  Kotlin map se toggle instant hai. Detail Strings.kt ke comment mein.
+-->
+<resources>
+    <string name="app_name">JalRakshak</string>
+    <string name="alert_channel_name">Flood alerts</string>
+    <string name="alert_channel_desc">Aapke gaon ke liye baadh ki chetavani · Flood warnings for your village</string>
+</resources>

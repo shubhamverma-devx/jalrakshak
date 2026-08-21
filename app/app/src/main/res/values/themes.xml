@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  App ka Android-level theme.
+
+  KYUN itna chhota: poori UI Jetpack Compose mein hai, to rang/typography sab
+  ui/theme/Theme.kt se aate hain. Ye XML theme sirf WINDOW ke liye hai — app khulne
+  aur Compose ke first frame ke beech ka wo aadha second. Yahan sahi background na do
+  to us pal safed/kaala flash dikhta hai.
+
+  NoActionBar isliye ki Compose khud apna top bar banata hai.
+-->
+<resources>
+    <style name="Theme.JalRakshak" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/window_background</item>
+        <item name="android:statusBarColor">@color/window_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

@@ -1,0 +1,24 @@
+<!doctype html>
+<!-- data-theme yahan set hai taaki pehli paint se hi sahi background aaye.
+     Agar React ke mount hone ka intezaar karte to ek pal ke liye safed flash dikhta
+     (dark theme mein wo aankh mein chubhta hai). useTheme baad mein isko update karta hai. -->
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="JalRakshak — flood early-warning command center for Assam" />
+    <title>JalRakshak — Command Center</title>
+    <script>
+      // Theme ko React se PEHLE lagao (flash-of-wrong-theme se bachne ke liye).
+      // useTheme bhi yahi key padhta hai — dono ek hi jagah se.
+      try {
+        var t = localStorage.getItem('jalrakshak-theme')
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t)
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

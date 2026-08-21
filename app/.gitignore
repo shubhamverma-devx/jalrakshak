@@ -1,0 +1,19 @@
+# Android / Gradle
+*.iml
+.gradle/
+# machine-specific SDK path (Android Studio khud bana deta hai)
+/local.properties
+.idea/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+
+# FIREBASE — kabhi commit nahi.
+# app/google-services.json Firebase project config hai. Ye APK ke andar waise bhi
+# ship hota hai, par repo public/shared ho to bhi isko bahar hi rakhte hain —
+# root .gitignore ka rule bhi isi ko dohraata hai.
+# Naya developer: Firebase Console > Project settings > Android app > google-services.json
+app/google-services.json

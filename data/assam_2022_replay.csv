@@ -1,0 +1,361 @@
+village_name,river_station_name,date,rainfall_mm,source
+Nimatighat,Neamatighat,2022-06-15,13.6,replay
+Nimatighat,Neamatighat,2022-06-16,0,replay
+Nimatighat,Neamatighat,2022-06-17,39.7,replay
+Nimatighat,Neamatighat,2022-06-18,94.6,replay
+Nimatighat,Neamatighat,2022-06-19,180.4,replay
+Nimatighat,Neamatighat,2022-06-20,208.1,replay
+Nimatighat,Neamatighat,2022-06-21,186.6,replay
+Nimatighat,Neamatighat,2022-06-22,89.1,replay
+Nimatighat,Neamatighat,2022-06-23,45.6,replay
+Nimatighat,Neamatighat,2022-06-24,0,replay
+Nimatighat,Neamatighat,2022-06-25,0,replay
+Nimatighat,Neamatighat,2022-06-26,5.7,replay
+Kaziranga,Nematighat,2022-06-15,0,replay
+Kaziranga,Nematighat,2022-06-16,8.2,replay
+Kaziranga,Nematighat,2022-06-17,60.1,replay
+Kaziranga,Nematighat,2022-06-18,119.8,replay
+Kaziranga,Nematighat,2022-06-19,180.0,replay
+Kaziranga,Nematighat,2022-06-20,228.6,replay
+Kaziranga,Nematighat,2022-06-21,203.6,replay
+Kaziranga,Nematighat,2022-06-22,98.2,replay
+Kaziranga,Nematighat,2022-06-23,66.3,replay
+Kaziranga,Nematighat,2022-06-24,28.2,replay
+Kaziranga,Nematighat,2022-06-25,2.0,replay
+Kaziranga,Nematighat,2022-06-26,0,replay
+Dhansiri,Dhansiri,2022-06-15,26.5,replay
+Dhansiri,Dhansiri,2022-06-16,12.6,replay
+Dhansiri,Dhansiri,2022-06-17,34.2,replay
+Dhansiri,Dhansiri,2022-06-18,93.6,replay
+Dhansiri,Dhansiri,2022-06-19,191.6,replay
+Dhansiri,Dhansiri,2022-06-20,213.1,replay
+Dhansiri,Dhansiri,2022-06-21,190.0,replay
+Dhansiri,Dhansiri,2022-06-22,118.9,replay
+Dhansiri,Dhansiri,2022-06-23,52.0,replay
+Dhansiri,Dhansiri,2022-06-24,38.1,replay
+Dhansiri,Dhansiri,2022-06-25,3.3,replay
+Dhansiri,Dhansiri,2022-06-26,7.6,replay
+Majuli,Neamatighat,2022-06-15,21.5,replay
+Majuli,Neamatighat,2022-06-16,24.8,replay
+Majuli,Neamatighat,2022-06-17,68.0,replay
+Majuli,Neamatighat,2022-06-18,119.7,replay
+Majuli,Neamatighat,2022-06-19,197.2,replay
+Majuli,Neamatighat,2022-06-20,204.2,replay
+Majuli,Neamatighat,2022-06-21,178.1,replay
+Majuli,Neamatighat,2022-06-22,108.2,replay
+Majuli,Neamatighat,2022-06-23,36.7,replay
+Majuli,Neamatighat,2022-06-24,9.4,replay
+Majuli,Neamatighat,2022-06-25,0,replay
+Majuli,Neamatighat,2022-06-26,0,replay
+Dibrugarh Town,Dibrugarh,2022-06-15,12.9,replay
+Dibrugarh Town,Dibrugarh,2022-06-16,10.8,replay
+Dibrugarh Town,Dibrugarh,2022-06-17,35.8,replay
+Dibrugarh Town,Dibrugarh,2022-06-18,76.2,replay
+Dibrugarh Town,Dibrugarh,2022-06-19,132.2,replay
+Dibrugarh Town,Dibrugarh,2022-06-20,183.8,replay
+Dibrugarh Town,Dibrugarh,2022-06-21,147.5,replay
+Dibrugarh Town,Dibrugarh,2022-06-22,92.2,replay
+Dibrugarh Town,Dibrugarh,2022-06-23,27.8,replay
+Dibrugarh Town,Dibrugarh,2022-06-24,25.4,replay
+Dibrugarh Town,Dibrugarh,2022-06-25,0,replay
+Dibrugarh Town,Dibrugarh,2022-06-26,0.6,replay
+Sadiya,Sadiya,2022-06-15,26.8,replay
+Sadiya,Sadiya,2022-06-16,20.3,replay
+Sadiya,Sadiya,2022-06-17,38.5,replay
+Sadiya,Sadiya,2022-06-18,84.3,replay
+Sadiya,Sadiya,2022-06-19,137.2,replay
+Sadiya,Sadiya,2022-06-20,156.0,replay
+Sadiya,Sadiya,2022-06-21,112.7,replay
+Sadiya,Sadiya,2022-06-22,58.2,replay
+Sadiya,Sadiya,2022-06-23,28.9,replay
+Sadiya,Sadiya,2022-06-24,5.4,replay
+Sadiya,Sadiya,2022-06-25,0,replay
+Sadiya,Sadiya,2022-06-26,23.1,replay
+Tezpur,Tezpur,2022-06-15,23.1,replay
+Tezpur,Tezpur,2022-06-16,11.1,replay
+Tezpur,Tezpur,2022-06-17,54.7,replay
+Tezpur,Tezpur,2022-06-18,100.8,replay
+Tezpur,Tezpur,2022-06-19,186.4,replay
+Tezpur,Tezpur,2022-06-20,198.0,replay
+Tezpur,Tezpur,2022-06-21,160.4,replay
+Tezpur,Tezpur,2022-06-22,94.8,replay
+Tezpur,Tezpur,2022-06-23,50.9,replay
+Tezpur,Tezpur,2022-06-24,9.0,replay
+Tezpur,Tezpur,2022-06-25,11.4,replay
+Tezpur,Tezpur,2022-06-26,21.4,replay
+Dhubri,Dhubri,2022-06-15,5.0,replay
+Dhubri,Dhubri,2022-06-16,11.8,replay
+Dhubri,Dhubri,2022-06-17,82.9,replay
+Dhubri,Dhubri,2022-06-18,138.9,replay
+Dhubri,Dhubri,2022-06-19,208.7,replay
+Dhubri,Dhubri,2022-06-20,246.9,replay
+Dhubri,Dhubri,2022-06-21,209.5,replay
+Dhubri,Dhubri,2022-06-22,143.6,replay
+Dhubri,Dhubri,2022-06-23,74.7,replay
+Dhubri,Dhubri,2022-06-24,20.0,replay
+Dhubri,Dhubri,2022-06-25,0,replay
+Dhubri,Dhubri,2022-06-26,0.9,replay
+Goalpara,Goalpara,2022-06-15,28.8,replay
+Goalpara,Goalpara,2022-06-16,23.7,replay
+Goalpara,Goalpara,2022-06-17,80.1,replay
+Goalpara,Goalpara,2022-06-18,148.8,replay
+Goalpara,Goalpara,2022-06-19,198.8,replay
+Goalpara,Goalpara,2022-06-20,265.8,replay
+Goalpara,Goalpara,2022-06-21,225.6,replay
+Goalpara,Goalpara,2022-06-22,135.9,replay
+Goalpara,Goalpara,2022-06-23,51.9,replay
+Goalpara,Goalpara,2022-06-24,28.2,replay
+Goalpara,Goalpara,2022-06-25,0,replay
+Goalpara,Goalpara,2022-06-26,3.0,replay
+Barpeta,Barpeta,2022-06-15,7.1,replay
+Barpeta,Barpeta,2022-06-16,40.8,replay
+Barpeta,Barpeta,2022-06-17,76.6,replay
+Barpeta,Barpeta,2022-06-18,125.6,replay
+Barpeta,Barpeta,2022-06-19,219.5,replay
+Barpeta,Barpeta,2022-06-20,245.5,replay
+Barpeta,Barpeta,2022-06-21,236.0,replay
+Barpeta,Barpeta,2022-06-22,149.9,replay
+Barpeta,Barpeta,2022-06-23,53.5,replay
+Barpeta,Barpeta,2022-06-24,28.2,replay
+Barpeta,Barpeta,2022-06-25,13.3,replay
+Barpeta,Barpeta,2022-06-26,0,replay
+Morigaon,Morigaon,2022-06-15,19.0,replay
+Morigaon,Morigaon,2022-06-16,22.3,replay
+Morigaon,Morigaon,2022-06-17,66.7,replay
+Morigaon,Morigaon,2022-06-18,122.6,replay
+Morigaon,Morigaon,2022-06-19,176.9,replay
+Morigaon,Morigaon,2022-06-20,224.6,replay
+Morigaon,Morigaon,2022-06-21,177.7,replay
+Morigaon,Morigaon,2022-06-22,138.5,replay
+Morigaon,Morigaon,2022-06-23,70.7,replay
+Morigaon,Morigaon,2022-06-24,34.0,replay
+Morigaon,Morigaon,2022-06-25,0.8,replay
+Morigaon,Morigaon,2022-06-26,0,replay
+Nagaon,Nagaon,2022-06-15,23.5,replay
+Nagaon,Nagaon,2022-06-16,38.2,replay
+Nagaon,Nagaon,2022-06-17,37.5,replay
+Nagaon,Nagaon,2022-06-18,117.4,replay
+Nagaon,Nagaon,2022-06-19,174.0,replay
+Nagaon,Nagaon,2022-06-20,235.4,replay
+Nagaon,Nagaon,2022-06-21,201.9,replay
+Nagaon,Nagaon,2022-06-22,103.1,replay
+Nagaon,Nagaon,2022-06-23,53.1,replay
+Nagaon,Nagaon,2022-06-24,22.3,replay
+Nagaon,Nagaon,2022-06-25,0,replay
+Nagaon,Nagaon,2022-06-26,20.4,replay
+Hojai,Kampur,2022-06-15,5.2,replay
+Hojai,Kampur,2022-06-16,8.0,replay
+Hojai,Kampur,2022-06-17,53.3,replay
+Hojai,Kampur,2022-06-18,121.7,replay
+Hojai,Kampur,2022-06-19,170.2,replay
+Hojai,Kampur,2022-06-20,206.8,replay
+Hojai,Kampur,2022-06-21,202.0,replay
+Hojai,Kampur,2022-06-22,118.5,replay
+Hojai,Kampur,2022-06-23,49.2,replay
+Hojai,Kampur,2022-06-24,20.3,replay
+Hojai,Kampur,2022-06-25,0,replay
+Hojai,Kampur,2022-06-26,0,replay
+Lakhimpur,North Lakhimpur,2022-06-15,1.3,replay
+Lakhimpur,North Lakhimpur,2022-06-16,21.0,replay
+Lakhimpur,North Lakhimpur,2022-06-17,34.4,replay
+Lakhimpur,North Lakhimpur,2022-06-18,86.2,replay
+Lakhimpur,North Lakhimpur,2022-06-19,140.2,replay
+Lakhimpur,North Lakhimpur,2022-06-20,190.2,replay
+Lakhimpur,North Lakhimpur,2022-06-21,146.5,replay
+Lakhimpur,North Lakhimpur,2022-06-22,113.6,replay
+Lakhimpur,North Lakhimpur,2022-06-23,59.6,replay
+Lakhimpur,North Lakhimpur,2022-06-24,0.3,replay
+Lakhimpur,North Lakhimpur,2022-06-25,0,replay
+Lakhimpur,North Lakhimpur,2022-06-26,12.2,replay
+Dhemaji,Dhemaji,2022-06-15,0,replay
+Dhemaji,Dhemaji,2022-06-16,2.3,replay
+Dhemaji,Dhemaji,2022-06-17,61.1,replay
+Dhemaji,Dhemaji,2022-06-18,96.8,replay
+Dhemaji,Dhemaji,2022-06-19,150.6,replay
+Dhemaji,Dhemaji,2022-06-20,189.7,replay
+Dhemaji,Dhemaji,2022-06-21,164.0,replay
+Dhemaji,Dhemaji,2022-06-22,81.6,replay
+Dhemaji,Dhemaji,2022-06-23,27.6,replay
+Dhemaji,Dhemaji,2022-06-24,14.3,replay
+Dhemaji,Dhemaji,2022-06-25,4.6,replay
+Dhemaji,Dhemaji,2022-06-26,4.1,replay
+Sivasagar,Sivasagar,2022-06-15,16.8,replay
+Sivasagar,Sivasagar,2022-06-16,23.8,replay
+Sivasagar,Sivasagar,2022-06-17,62.5,replay
+Sivasagar,Sivasagar,2022-06-18,76.6,replay
+Sivasagar,Sivasagar,2022-06-19,145.6,replay
+Sivasagar,Sivasagar,2022-06-20,169.2,replay
+Sivasagar,Sivasagar,2022-06-21,163.9,replay
+Sivasagar,Sivasagar,2022-06-22,82.6,replay
+Sivasagar,Sivasagar,2022-06-23,30.7,replay
+Sivasagar,Sivasagar,2022-06-24,14.8,replay
+Sivasagar,Sivasagar,2022-06-25,4.5,replay
+Sivasagar,Sivasagar,2022-06-26,0,replay
+Bongaigaon,Bongaigaon,2022-06-15,0,replay
+Bongaigaon,Bongaigaon,2022-06-16,38.6,replay
+Bongaigaon,Bongaigaon,2022-06-17,56.3,replay
+Bongaigaon,Bongaigaon,2022-06-18,142.7,replay
+Bongaigaon,Bongaigaon,2022-06-19,210.2,replay
+Bongaigaon,Bongaigaon,2022-06-20,227.0,replay
+Bongaigaon,Bongaigaon,2022-06-21,228.1,replay
+Bongaigaon,Bongaigaon,2022-06-22,141.7,replay
+Bongaigaon,Bongaigaon,2022-06-23,77.3,replay
+Bongaigaon,Bongaigaon,2022-06-24,38.7,replay
+Bongaigaon,Bongaigaon,2022-06-25,22.7,replay
+Bongaigaon,Bongaigaon,2022-06-26,0,replay
+Kokrajhar,Kokrajhar,2022-06-15,8.2,replay
+Kokrajhar,Kokrajhar,2022-06-16,10.5,replay
+Kokrajhar,Kokrajhar,2022-06-17,55.5,replay
+Kokrajhar,Kokrajhar,2022-06-18,112.6,replay
+Kokrajhar,Kokrajhar,2022-06-19,206.7,replay
+Kokrajhar,Kokrajhar,2022-06-20,268.4,replay
+Kokrajhar,Kokrajhar,2022-06-21,202.2,replay
+Kokrajhar,Kokrajhar,2022-06-22,141.6,replay
+Kokrajhar,Kokrajhar,2022-06-23,57.7,replay
+Kokrajhar,Kokrajhar,2022-06-24,18.9,replay
+Kokrajhar,Kokrajhar,2022-06-25,27.1,replay
+Kokrajhar,Kokrajhar,2022-06-26,25.4,replay
+Nalbari,Nalbari,2022-06-15,11.1,replay
+Nalbari,Nalbari,2022-06-16,30.9,replay
+Nalbari,Nalbari,2022-06-17,46.2,replay
+Nalbari,Nalbari,2022-06-18,123.5,replay
+Nalbari,Nalbari,2022-06-19,232.6,replay
+Nalbari,Nalbari,2022-06-20,254.8,replay
+Nalbari,Nalbari,2022-06-21,215.5,replay
+Nalbari,Nalbari,2022-06-22,141.6,replay
+Nalbari,Nalbari,2022-06-23,42.3,replay
+Nalbari,Nalbari,2022-06-24,25.5,replay
+Nalbari,Nalbari,2022-06-25,8.9,replay
+Nalbari,Nalbari,2022-06-26,19.7,replay
+Baksa,Baksa,2022-06-15,0,replay
+Baksa,Baksa,2022-06-16,39.8,replay
+Baksa,Baksa,2022-06-17,40.9,replay
+Baksa,Baksa,2022-06-18,113.6,replay
+Baksa,Baksa,2022-06-19,208.6,replay
+Baksa,Baksa,2022-06-20,248.0,replay
+Baksa,Baksa,2022-06-21,194.2,replay
+Baksa,Baksa,2022-06-22,111.0,replay
+Baksa,Baksa,2022-06-23,73.3,replay
+Baksa,Baksa,2022-06-24,11.3,replay
+Baksa,Baksa,2022-06-25,12.4,replay
+Baksa,Baksa,2022-06-26,10.4,replay
+Chirang,Chirang,2022-06-15,5.5,replay
+Chirang,Chirang,2022-06-16,25.1,replay
+Chirang,Chirang,2022-06-17,59.8,replay
+Chirang,Chirang,2022-06-18,146.3,replay
+Chirang,Chirang,2022-06-19,197.5,replay
+Chirang,Chirang,2022-06-20,255.0,replay
+Chirang,Chirang,2022-06-21,198.8,replay
+Chirang,Chirang,2022-06-22,124.7,replay
+Chirang,Chirang,2022-06-23,65.7,replay
+Chirang,Chirang,2022-06-24,13.8,replay
+Chirang,Chirang,2022-06-25,1.4,replay
+Chirang,Chirang,2022-06-26,15.7,replay
+Darrang,Darrang,2022-06-15,0,replay
+Darrang,Darrang,2022-06-16,19.4,replay
+Darrang,Darrang,2022-06-17,76.4,replay
+Darrang,Darrang,2022-06-18,143.3,replay
+Darrang,Darrang,2022-06-19,183.2,replay
+Darrang,Darrang,2022-06-20,224.2,replay
+Darrang,Darrang,2022-06-21,190.9,replay
+Darrang,Darrang,2022-06-22,140.8,replay
+Darrang,Darrang,2022-06-23,71.7,replay
+Darrang,Darrang,2022-06-24,36.2,replay
+Darrang,Darrang,2022-06-25,3.4,replay
+Darrang,Darrang,2022-06-26,0,replay
+Udalguri,Udalguri,2022-06-15,21.8,replay
+Udalguri,Udalguri,2022-06-16,28.6,replay
+Udalguri,Udalguri,2022-06-17,59.2,replay
+Udalguri,Udalguri,2022-06-18,138.8,replay
+Udalguri,Udalguri,2022-06-19,199.6,replay
+Udalguri,Udalguri,2022-06-20,208.0,replay
+Udalguri,Udalguri,2022-06-21,206.2,replay
+Udalguri,Udalguri,2022-06-22,111.3,replay
+Udalguri,Udalguri,2022-06-23,61.2,replay
+Udalguri,Udalguri,2022-06-24,38.0,replay
+Udalguri,Udalguri,2022-06-25,0,replay
+Udalguri,Udalguri,2022-06-26,0,replay
+Karbi Anglong,Diphu,2022-06-15,0,replay
+Karbi Anglong,Diphu,2022-06-16,11.3,replay
+Karbi Anglong,Diphu,2022-06-17,9.3,replay
+Karbi Anglong,Diphu,2022-06-18,40.0,replay
+Karbi Anglong,Diphu,2022-06-19,64.5,replay
+Karbi Anglong,Diphu,2022-06-20,53.1,replay
+Karbi Anglong,Diphu,2022-06-21,61.2,replay
+Karbi Anglong,Diphu,2022-06-22,26.4,replay
+Karbi Anglong,Diphu,2022-06-23,17.9,replay
+Karbi Anglong,Diphu,2022-06-24,25.4,replay
+Karbi Anglong,Diphu,2022-06-25,19.8,replay
+Karbi Anglong,Diphu,2022-06-26,0,replay
+Cachar,Silchar,2022-06-15,6.1,replay
+Cachar,Silchar,2022-06-16,14.6,replay
+Cachar,Silchar,2022-06-17,44.7,replay
+Cachar,Silchar,2022-06-18,152.8,replay
+Cachar,Silchar,2022-06-19,236.2,replay
+Cachar,Silchar,2022-06-20,262.1,replay
+Cachar,Silchar,2022-06-21,240.4,replay
+Cachar,Silchar,2022-06-22,144.0,replay
+Cachar,Silchar,2022-06-23,61.6,replay
+Cachar,Silchar,2022-06-24,3.9,replay
+Cachar,Silchar,2022-06-25,0,replay
+Cachar,Silchar,2022-06-26,21.0,replay
+Hailakandi,Hailakandi,2022-06-15,25.3,replay
+Hailakandi,Hailakandi,2022-06-16,25.5,replay
+Hailakandi,Hailakandi,2022-06-17,78.2,replay
+Hailakandi,Hailakandi,2022-06-18,145.9,replay
+Hailakandi,Hailakandi,2022-06-19,217.8,replay
+Hailakandi,Hailakandi,2022-06-20,258.1,replay
+Hailakandi,Hailakandi,2022-06-21,224.2,replay
+Hailakandi,Hailakandi,2022-06-22,158.6,replay
+Hailakandi,Hailakandi,2022-06-23,76.7,replay
+Hailakandi,Hailakandi,2022-06-24,38.1,replay
+Hailakandi,Hailakandi,2022-06-25,25.1,replay
+Hailakandi,Hailakandi,2022-06-26,0,replay
+Karimganj,Karimganj,2022-06-15,0,replay
+Karimganj,Karimganj,2022-06-16,7.9,replay
+Karimganj,Karimganj,2022-06-17,76.6,replay
+Karimganj,Karimganj,2022-06-18,159.3,replay
+Karimganj,Karimganj,2022-06-19,230.4,replay
+Karimganj,Karimganj,2022-06-20,280.5,replay
+Karimganj,Karimganj,2022-06-21,220.3,replay
+Karimganj,Karimganj,2022-06-22,161.2,replay
+Karimganj,Karimganj,2022-06-23,80.0,replay
+Karimganj,Karimganj,2022-06-24,42.9,replay
+Karimganj,Karimganj,2022-06-25,21.6,replay
+Karimganj,Karimganj,2022-06-26,20.9,replay
+South Salmara,Dhubri,2022-06-15,0,replay
+South Salmara,Dhubri,2022-06-16,32.7,replay
+South Salmara,Dhubri,2022-06-17,56.9,replay
+South Salmara,Dhubri,2022-06-18,157.1,replay
+South Salmara,Dhubri,2022-06-19,239.4,replay
+South Salmara,Dhubri,2022-06-20,282.2,replay
+South Salmara,Dhubri,2022-06-21,239.8,replay
+South Salmara,Dhubri,2022-06-22,130.5,replay
+South Salmara,Dhubri,2022-06-23,75.1,replay
+South Salmara,Dhubri,2022-06-24,7.6,replay
+South Salmara,Dhubri,2022-06-25,24.0,replay
+South Salmara,Dhubri,2022-06-26,20.0,replay
+Biswanath,Biswanath,2022-06-15,0,replay
+Biswanath,Biswanath,2022-06-16,31.7,replay
+Biswanath,Biswanath,2022-06-17,48.3,replay
+Biswanath,Biswanath,2022-06-18,100.6,replay
+Biswanath,Biswanath,2022-06-19,187.2,replay
+Biswanath,Biswanath,2022-06-20,195.4,replay
+Biswanath,Biswanath,2022-06-21,156.4,replay
+Biswanath,Biswanath,2022-06-22,96.1,replay
+Biswanath,Biswanath,2022-06-23,43.1,replay
+Biswanath,Biswanath,2022-06-24,33.6,replay
+Biswanath,Biswanath,2022-06-25,26.8,replay
+Biswanath,Biswanath,2022-06-26,0,replay
+Charaideo,Sonari,2022-06-15,13.0,replay
+Charaideo,Sonari,2022-06-16,11.6,replay
+Charaideo,Sonari,2022-06-17,58.5,replay
+Charaideo,Sonari,2022-06-18,85.2,replay
+Charaideo,Sonari,2022-06-19,152.4,replay
+Charaideo,Sonari,2022-06-20,142.9,replay
+Charaideo,Sonari,2022-06-21,153.6,replay
+Charaideo,Sonari,2022-06-22,70.9,replay
+Charaideo,Sonari,2022-06-23,57.7,replay
+Charaideo,Sonari,2022-06-24,6.3,replay
+Charaideo,Sonari,2022-06-25,0,replay
+Charaideo,Sonari,2022-06-26,2.8,replay

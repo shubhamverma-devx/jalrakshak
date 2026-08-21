@@ -1,0 +1,30 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Local API config. `.env.example` committed hai — usko copy karke `.env` banao.
+# Ye secret nahi hai (Vite VITE_* ko client bundle mein daal deta hai), par backend/.gitignore
+# ke saath consistent rehne ke liye ignore kar rahe hain. Bina .env ke bhi app chalta hai —
+# src/config.js mein localhost:8000 ka fallback hai.
+.env

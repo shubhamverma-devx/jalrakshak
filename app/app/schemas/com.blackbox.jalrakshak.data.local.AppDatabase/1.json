@@ -1,0 +1,248 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "1062b1bc25486c28a4f8e249fbffa37c",
+    "entities": [
+      {
+        "tableName": "cached_village",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `district` TEXT NOT NULL, `lat` REAL NOT NULL, `lng` REAL NOT NULL, `population` INTEGER NOT NULL, `elevationM` INTEGER NOT NULL, `level` TEXT NOT NULL, `score` INTEGER NOT NULL, `reasonHi` TEXT NOT NULL, `reasonEn` TEXT NOT NULL, `adviceHi` TEXT NOT NULL, `adviceEn` TEXT NOT NULL, `waterEtaHi` TEXT NOT NULL, `waterEtaEn` TEXT NOT NULL, `rainfallMm` REAL NOT NULL, `riverLevelM` REAL, `dangerLevelM` REAL, `riverData` INTEGER NOT NULL, `cachedAt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "district",
+            "columnName": "district",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lat",
+            "columnName": "lat",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lng",
+            "columnName": "lng",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "population",
+            "columnName": "population",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "elevationM",
+            "columnName": "elevationM",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "level",
+            "columnName": "level",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "score",
+            "columnName": "score",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reasonHi",
+            "columnName": "reasonHi",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reasonEn",
+            "columnName": "reasonEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "adviceHi",
+            "columnName": "adviceHi",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "adviceEn",
+            "columnName": "adviceEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "waterEtaHi",
+            "columnName": "waterEtaHi",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "waterEtaEn",
+            "columnName": "waterEtaEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rainfallMm",
+            "columnName": "rainfallMm",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "riverLevelM",
+            "columnName": "riverLevelM",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dangerLevelM",
+            "columnName": "dangerLevelM",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "riverData",
+            "columnName": "riverData",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cachedAt",
+            "columnName": "cachedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "cached_alert",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `villageId` INTEGER NOT NULL, `messageHi` TEXT NOT NULL, `messageEn` TEXT NOT NULL, `sentBy` TEXT NOT NULL, `sentAt` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "villageId",
+            "columnName": "villageId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "messageHi",
+            "columnName": "messageHi",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "messageEn",
+            "columnName": "messageEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sentBy",
+            "columnName": "sentBy",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sentAt",
+            "columnName": "sentAt",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "cached_shelter",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `villageId` INTEGER NOT NULL, `name` TEXT NOT NULL, `lat` REAL NOT NULL, `lng` REAL NOT NULL, `capacity` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "villageId",
+            "columnName": "villageId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lat",
+            "columnName": "lat",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lng",
+            "columnName": "lng",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "capacity",
+            "columnName": "capacity",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1062b1bc25486c28a4f8e249fbffa37c')"
+    ]
+  }
+}

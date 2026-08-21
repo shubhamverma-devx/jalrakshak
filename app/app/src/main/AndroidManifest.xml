@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- API calls ke liye. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!--
+      Android 13+ pe notification dikhane ke liye RUNTIME permission zaroori hai.
+      Iske bina FCM push aata hai par CHUP-CHAAP gir jaata hai — koi error nahi, kuch
+      dikhta hi nahi. FCM debug karte waqt ye sabse zyada time khaane wali cheez hai.
+    -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!--
+      SOS ke saath citizen ki jagah bhejne ke liye.
+      SIRF COARSE (~1-2 km), FINE nahi — rescue team ko mohalla chahiye, exact ghar nahi.
+      Kam permission maangna hamesha behtar hai, aur user bhi coarse dene mein comfortable
+      hota hai. Permission na ho to app gaon ka lat/lng bhejti hai (SosSheet dekho).
+    -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <application
+        android:name=".JalRakshakApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.JalRakshak"
+        android:networkSecurityConfig="@xml/network_security_config">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.JalRakshak"
+            android:windowSoftInputMode="adjustResize"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          FCM service. exported="false" — sirf Android system isse call karta hai.
+          android:name ka intent-filter FirebaseMessagingService ke liye zaroori hai;
+          iske bina push aayega hi nahi.
+        -->
+        <service
+            android:name=".push.JalRakshakMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!--
+          Notification ka default icon aur rang. Backend har push mein channel_id bhejta
+          hai, par ye defaults tab kaam aate hain jab Android KHUD notification banata hai
+          (app background mein ho) — us case mein hamara onMessageReceived chalta hi nahi.
+        -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/notification_accent" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="jalrakshak_alerts" />
+
+    </application>
+</manifest>

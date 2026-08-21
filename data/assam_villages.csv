@@ -1,0 +1,31 @@
+name,district,lat,lng,elevation_m,population,river_station_name
+Nimatighat,Jorhat,26.8100,94.3200,78,4200,Neamatighat
+Kaziranga,Golaghat,26.5775,93.1711,60,3800,Nematighat
+Dhansiri,Golaghat,26.4500,93.7000,72,2600,Dhansiri
+Majuli,Majuli,26.9500,94.1700,62,5400,Neamatighat
+Dibrugarh Town,Dibrugarh,27.4728,94.9120,104,15000,Dibrugarh
+Sadiya,Tinsukia,27.8300,95.6700,120,3100,Sadiya
+Tezpur,Sonitpur,26.6338,92.8000,79,12000,Tezpur
+Dhubri,Dhubri,26.0200,89.9800,30,9800,Dhubri
+Goalpara,Goalpara,26.1700,90.6200,36,7400,Goalpara
+Barpeta,Barpeta,26.3200,91.0000,35,6900,Barpeta
+Morigaon,Morigaon,26.2500,92.3400,55,4300,Morigaon
+Nagaon,Nagaon,26.3500,92.6800,60,13000,Nagaon
+Hojai,Hojai,26.0000,92.8500,68,5200,Kampur
+Lakhimpur,Lakhimpur,27.2300,94.1000,90,6100,North Lakhimpur
+Dhemaji,Dhemaji,27.4800,94.5800,95,3900,Dhemaji
+Sivasagar,Sivasagar,26.9800,94.6300,97,7700,Sivasagar
+Bongaigaon,Bongaigaon,26.4800,90.5600,45,6600,Bongaigaon
+Kokrajhar,Kokrajhar,26.4000,90.2700,42,5100,Kokrajhar
+Nalbari,Nalbari,26.4400,91.4400,40,4800,Nalbari
+Baksa,Baksa,26.6900,91.1000,48,3500,Baksa
+Chirang,Chirang,26.5300,90.6000,44,2900,Chirang
+Darrang,Darrang,26.4500,92.0300,52,4100,Darrang
+Udalguri,Udalguri,26.7500,92.1000,58,3300,Udalguri
+Karbi Anglong,Karbi Anglong,26.0000,93.4000,186,2400,Diphu
+Cachar,Cachar,24.8300,92.7800,25,8800,Silchar
+Hailakandi,Hailakandi,24.6800,92.5600,24,4600,Hailakandi
+Karimganj,Karimganj,24.8700,92.3500,22,5300,Karimganj
+South Salmara,South Salmara,25.8800,89.8500,28,2700,Dhubri
+Biswanath,Biswanath,26.7300,93.1500,74,3600,Biswanath
+Charaideo,Charaideo,27.0000,95.0000,110,2200,Sonari

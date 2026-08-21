@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Cleartext (http://) traffic ki permission — SIRF development ke do host ke liye.
+
+  KYUN CHAHIYE: Android 9+ pe http:// by default BLOCK hai. Emulator se laptop ka
+  Laravel `php artisan serve` http pe chalta hai (10.0.2.2 = emulator ke andar se
+  host laptop ka address). Iske bina har API call "CLEARTEXT not permitted" se fail hoti.
+
+  KYUN BLANKET `cleartextTrafficPermitted=true` NAHI: wo poore internet ke liye http
+  khol deta — koi bhi beech mein baith ke citizen ka SOS aur location padh sakta hai.
+  Yahan sirf local dev hosts allowed hain; droplet pe API https (certbot) pe jaayegi,
+  to production mein ye rule kisi kaam hi nahi aayega.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- emulator ke andar se host laptop -->
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <!-- adb reverse use karo to ye kaam aata hai -->
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+</network-security-config>

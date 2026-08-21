@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Sirf wahi rang jo Android ko XML mein chahiye (window background, notification icon tint).
+  Baaki poora palette ui/theme/Color.kt mein hai — dashboard ke mockup_v2.html se exact match.
+-->
+<resources>
+    <!-- dashboard ka light –bg (#e4e8ee) se thoda halka — splash flash kam dikhe -->
+    <color name="window_background">#EAEEF3</color>
+    <!-- notification accent — dashboard ka –accent -->
+    <color name="notification_accent">#3B6EA5</color>
+</resources>

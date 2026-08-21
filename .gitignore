@@ -1,0 +1,60 @@
+# =============================================================================
+#  JalRakshak — root .gitignore
+# =============================================================================
+
+# ---- SECRETS — kabhi commit nahi -------------------------------------------
+# _secrets/firebase-admin.json ek SERVICE ACCOUNT PRIVATE KEY hai. Ye leak hua to
+# koi bhi hamare Firebase project pe push notification bhej sakta hai (aur baaki
+# Firebase resources chhoo sakta hai). GitHub pe chala gaya to key turant revoke
+# karni padegi — Firebase Console > Project settings > Service accounts.
+#
+# google-services.json utna khatarnak nahi (wo waise bhi APK ke andar ship hota hai),
+# par project config hai, isliye repo se bahar hi rakhte hain.
+#
+# SETUP.md step 5 mein `git add .` likha hai — is line ke bina wo poori _secrets/
+# folder stage kar deta. Isiliye ye sabse upar hai.
+_secrets/
+*firebase-adminsdk*.json
+firebase-admin.json
+google-services.json
+.env
+.env.local
+
+# ---- INTERNAL / LOCAL-ONLY — GitHub pe kabhi nahi ---------------------------
+# Ye files team ke andar ke kaam ki hain: planning, AI ka context, aur wo notes
+# jinme saaf likha hai ki kaunsa seed data representative hai. Public repo mein
+# inka koi kaam nahi. Local machine pe rehti hain, bas push nahi hotin.
+#
+# NOTE: README.md JAAN-BUJH KE track ho raha hai — wahi ek file hai jo naye
+# developer ko repo samajhne ke liye chahiye. SETUP.md local-only hai kyunki
+# README already setup steps cover karta hai.
+
+# Claude Code / AI ka context
+CLAUDE.md
+docs/ai-context.md
+docs/decisions.md
+
+# Internal setup notes (README mein setup already hai)
+SETUP.md
+
+# Planning aur prompts
+BUILD_PLAN.md
+DIN1_PROMPT.md
+DIN*_PROMPT.md
+
+# Design reference (approved mockup — internal)
+mockup*.html
+
+# Data honesty notes (kya real hai, kya representative)
+data/DATA_NOTES.md
+
+# ---- Dependencies (har sub-project ka apna .gitignore bhi hai, ye safety net hai) --
+node_modules/
+vendor/
+dist/
+
+# ---- OS / editor -----------------------------------------------------------
+.DS_Store
+.idea/
+.vscode/
+*.swp

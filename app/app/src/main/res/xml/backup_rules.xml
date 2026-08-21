@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android auto-backup se kya bahar rakhein.
+
+  FCM token backup NAHI hona chahiye: token device+install ke saath bandha hota hai.
+  Purana token naye phone pe restore ho jaaye to backend usko valid samajh ke push
+  bhejta rahega, jo kabhi pahunchega nahi (aur asli device register hi nahi hoga).
+  Firebase khud bhi yahi salah deta hai.
+-->
+<full-backup-content>
+    <exclude domain="sharedpref" path="jalrakshak_prefs.xml" />
+</full-backup-content>
