@@ -18,6 +18,7 @@ For officials, through the web dashboard:
 * Charts for rainfall trends and affected population over time
 * A relief request list and a live activity feed
 * A replay mode that plays back the 2022 Assam flood day by day, so you can see how the system reacts as water rises
+* A satellite tab that runs a trained model on Sentinel-1 radar images and outlines the water it finds on the map, with the flooded area in square kilometres
 * One click to send an alert to a chosen village
 
 For citizens, through the Android app:
@@ -43,7 +44,7 @@ Where a value is a demo stand in rather than an official live reading, the inter
 
 ## Tech stack
 
-The backend is built with Laravel and MySQL and works as a JSON API. The officer dashboard is a React app using Leaflet for the map and Chart.js for the charts. The citizen app is native Android written in Kotlin with Jetpack Compose, using Room for offline storage. Push notifications use Firebase Cloud Messaging.
+The backend is built with Laravel and MySQL and works as a JSON API. The officer dashboard is a React app using Leaflet for the map and Chart.js for the charts. The citizen app is native Android written in Kotlin with Jetpack Compose, using Room for offline storage. Push notifications use Firebase Cloud Messaging. The satellite flood detection model is a U-Net trained in PyTorch, and the backend calls it as a Python process when the dashboard asks for a detection.
 
 ## Project structure
 
@@ -52,6 +53,7 @@ backend/ Laravel API, risk engine, data seeders
 dashboard/ React officer dashboard
 app/ Kotlin Android citizen app
 data/ Assam villages, river stations, replay dataset, shelters
+ml/ Satellite flood detection model, training notebook, metrics
 ```
 
 
@@ -81,6 +83,36 @@ npm run dev
 
 App:
 Open the app folder in Android Studio, use an emulator with Google Play services, and run.
+
+## Satellite flood detection
+
+The dashboard has a Satellite tab that reads a Sentinel-1 radar image and marks where the
+water is. This is a real trained model, not a rule. We trained a U-Net on the Sen1Floods11
+dataset, which is a public set of radar images with hand drawn water labels. On the ninety
+test images it had never seen during training it reaches an IoU of 0.6489 and an F1 of
+0.7871. The training notebook, the metrics and the figures are all in the ml folder, so the
+numbers can be checked rather than taken on trust.
+
+It is worth being clear about what this does. It looks at one image and says where water is
+in that image. It does not say where water will be tomorrow, and it is not a simulation of
+how water flows.
+
+The trained weights are a 93 MB file, which is too large to keep in the repository, so they
+are attached to a release instead. Download them before using the Satellite tab:
+
+```
+mkdir -p ml/models
+curl -L -o ml/models/sar_unet.pth \
+  https://github.com/shubhamverma-devx/jalrakshak/releases/download/v1.0/sar_unet.pth
+```
+
+The file has to sit at exactly `ml/models/sar_unet.pth`, because that is where both
+`ml/predict.py` and the backend look for it.
+
+You do not need the training dataset to run a detection. Four sample images from the test
+split are already included in `ml/samples/`, which is what the Satellite tab uses for the
+demo. The dataset is only needed if you want to train the model again, and `ml/download_data.py`
+fetches it for you. See `ml/README.md` for the full details.
 
 ## Team
 

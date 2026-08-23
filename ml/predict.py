@@ -59,10 +59,15 @@ def load_model(ckpt_path: Path, device: torch.device):
     import segmentation_models_pytorch as smp
 
     if not ckpt_path.exists():
+        # Weights repo mein nahi hain (93 MB) — Release se aate hain. Jo banda yahan
+        # phansa hai use SEEDHA command chahiye, "kahin se download kar lo" nahi.
         sys.exit(
-            f"Model nahi mila: {ckpt_path}\n"
-            "Pehle train_sar_unet.ipynb chalao (ya Colab se sar_unet.pth download karke "
-            "ml/models/ mein rakho)."
+            f"Model nahi mila: {ckpt_path}\n\n"
+            "Trained weights repo mein nahi hain (93 MB). Release se le lo:\n\n"
+            "  mkdir -p ml/models\n"
+            "  curl -L -o ml/models/sar_unet.pth \\\n"
+            "    https://github.com/shubhamverma-devx/jalrakshak/releases/download/v1.0/sar_unet.pth\n\n"
+            "Ya khud train karo: train_sar_unet.ipynb (ml/README.md dekho)."
         )
 
     ck = torch.load(ckpt_path, map_location=device, weights_only=False)

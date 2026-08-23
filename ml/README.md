@@ -186,6 +186,51 @@ badalna data ko jhootha kar deta hai.
 
 ---
 
+## Trained weights — download karna padega (repo mein nahi hain)
+
+`models/sar_unet.pth` **93 MB** ka hai. GitHub ki 100 MB per-file limit ke bilkul kinare pe
+hai, aur git se bada binary ek baar chala jaaye to history se kabhi nikalta nahi — repo
+hamesha ke liye bhaari ho jaata. Isliye weights **GitHub Release** mein hain, repo mein nahi.
+
+**Jo cheez SABOOT hai wo repo mein hi hai** — executed notebook, `outputs/metrics.json`,
+per-region results, confusion matrix, training curves. Sirf binary bahar hai.
+
+```bash
+mkdir -p ml/models
+curl -L -o ml/models/sar_unet.pth \
+  https://github.com/shubhamverma-devx/jalrakshak/releases/download/v1.0/sar_unet.pth
+```
+
+`gh` se bhi ho jaata hai (auth apne aap lag jaata hai — private repo ya CI ke liye yehi
+use karo):
+
+```bash
+gh release download v1.0 --repo shubhamverma-devx/jalrakshak \
+  --pattern sar_unet.pth --dir ml/models
+```
+
+**Exact path — bilkul yahi hona chahiye:**
+
+```
+ml/models/sar_unet.pth
+```
+
+`predict.py` aur dashboard ka Satellite tab (`SarDetectionService`) dono isi path pe dekhte
+hain. Kahin aur rakh diya to "model file nahi mili" wala error milega.
+
+Sahi file aayi ya nahi, check kar lo:
+
+```bash
+shasum -a 256 ml/models/sar_unet.pth
+# 221a98befc82bccb6b437a891f8a59221180898fcbf887b0295a2c89c0ce17a5
+```
+
+> **Sirf chalane ke liye dataset ki zaroorat NAHI hai.** 4 sample chips `ml/samples/` mein
+> bundled hain (test split se — model ne inhe train mein kabhi nahi dekha). 708 MB dataset
+> tabhi chahiye jab dobara TRAIN karna ho.
+
+---
+
 ## Chalane ka tareeka
 
 ### Local (MacBook M-series) — **yahi use kiya gaya**
@@ -315,7 +360,7 @@ ml/
 ├── requirements.txt
 ├── README.md                         # ye file
 ├── model_card.md
-├── models/sar_unet.pth               # 98 MB — gitignored (Release/Drive se share karo)
+├── models/sar_unet.pth               # 93 MB — gitignored, Release v1.0 se download karo (upar dekho)
 ├── outputs/                          # metrics + figures (tracked — yehi proof hai)
 └── scripts/
     ├── build_notebook.py             # notebook generator (regenerable rakha)
