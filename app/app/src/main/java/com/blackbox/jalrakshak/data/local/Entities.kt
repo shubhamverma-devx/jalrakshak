@@ -48,6 +48,8 @@ data class CachedVillage(
     val adviceEn: String,
     val waterEtaHi: String,
     val waterEtaEn: String,
+    /** Ghante — null agar paani badh nahi raha ya river data nahi. */
+    val hoursToDanger: Int?,
 
     val rainfallMm: Double,
     val riverLevelM: Double?,

@@ -1,0 +1,92 @@
+[
+  {
+    "region": "Nigeria",
+    "chips": 4,
+    "water_pct": 16.22,
+    "iou": 0.8864,
+    "f1": 0.9398,
+    "precision": 0.9254,
+    "recall": 0.9547
+  },
+  {
+    "region": "Mekong",
+    "chips": 6,
+    "water_pct": 14.47,
+    "iou": 0.8507,
+    "f1": 0.9193,
+    "precision": 0.9093,
+    "recall": 0.9295
+  },
+  {
+    "region": "Sri-Lanka",
+    "chips": 9,
+    "water_pct": 18.51,
+    "iou": 0.7828,
+    "f1": 0.8782,
+    "precision": 0.8909,
+    "recall": 0.8658
+  },
+  {
+    "region": "Spain",
+    "chips": 6,
+    "water_pct": 23.78,
+    "iou": 0.7226,
+    "f1": 0.8389,
+    "precision": 0.8016,
+    "recall": 0.8799
+  },
+  {
+    "region": "India",
+    "chips": 14,
+    "water_pct": 21.29,
+    "iou": 0.7044,
+    "f1": 0.8265,
+    "precision": 0.8471,
+    "recall": 0.8069
+  },
+  {
+    "region": "USA",
+    "chips": 14,
+    "water_pct": 3.15,
+    "iou": 0.571,
+    "f1": 0.7269,
+    "precision": 0.6747,
+    "recall": 0.788
+  },
+  {
+    "region": "Ghana",
+    "chips": 11,
+    "water_pct": 8.03,
+    "iou": 0.5474,
+    "f1": 0.7075,
+    "precision": 0.8819,
+    "recall": 0.5907
+  },
+  {
+    "region": "Paraguay",
+    "chips": 14,
+    "water_pct": 7.3,
+    "iou": 0.5074,
+    "f1": 0.6732,
+    "precision": 0.6776,
+    "recall": 0.6688
+  },
+  {
+    "region": "Somalia",
+    "chips": 6,
+    "water_pct": 6.53,
+    "iou": 0.4877,
+    "f1": 0.6557,
+    "precision": 0.7937,
+    "recall": 0.5585
+  },
+  {
+    "region": "Pakistan",
+    "chips": 6,
+    "water_pct": 17.95,
+    "iou": 0.2432,
+    "f1": 0.3913,
+    "precision": 0.4379,
+    "recall": 0.3536
+  }
+]

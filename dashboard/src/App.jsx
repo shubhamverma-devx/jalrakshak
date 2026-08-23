@@ -20,12 +20,11 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  IconActivity,
+  IconSatellite,
   IconAlertTriangle,
   IconChartBar,
   IconChartDonut,
   IconChartLine,
-  IconLifebuoy,
 } from '@tabler/icons-react'
 
 import './styles/global.css'
@@ -37,13 +36,16 @@ import RiskDonut from './components/RiskDonut'
 import RainfallBar from './components/RainfallBar'
 import RiskMap from './components/RiskMap'
 import TrendChart from './components/TrendChart'
-import ReliefList from './components/ReliefList'
-import ActivityFeed from './components/ActivityFeed'
+import ReliefPanel from './components/ReliefPanel'
+import ActivityPanel from './components/ActivityPanel'
 import ReplaySlider from './components/ReplaySlider'
+import SatellitePanel from './components/SatellitePanel'
 import VillageDrawer from './components/VillageDrawer'
+import SendAlertDialog from './components/SendAlertDialog'
 import Toast from './components/Toast'
 
 import { useDashboardData } from './hooks/useDashboardData'
+import { useSarDetection } from './hooks/useSarDetection'
 import { useTheme } from './hooks/useTheme'
 import { dayLabel } from './utils/format'
 import { derivePhase } from './utils/risk'
@@ -56,13 +58,20 @@ export default function App() {
   const [selected, setSelected] = useState(null) // drawer mein khula gaon
   const [toast, setToast] = useState(null)
   const [sessionAlerts, setSessionAlerts] = useState(0) // is session mein kitne alert gaye
+  const [alertOpen, setAlertOpen] = useState(false) // topbar wala Send-alert dialog
 
   const { toggle, isDark } = useTheme()
-  const { replay, live, ops, refreshOps, retry } = useDashboardData(mode)
+  const { replay, live, ops, refreshOps, retry, setReliefStatus } = useDashboardData(mode)
+
+  // B1 — SAR detection. Sirf Satellite tab pe active hota hai (lazy).
+  const sar = useSarDetection(mode === 'satellite')
+  const isSat = mode === 'satellite'
 
   // --- Abhi kaunsa snapshot dikh raha hai ------------------------------------------
   // Replay mein slider ka din, live mein Open-Meteo wala. Poora dashboard isi ek
   // object se chalta hai — isliye map, KPI aur charts kabhi alag baat nahi bolte.
+  // Satellite mode mein bhi village dots dikhte rehte hain (live risk se) — taaki
+  // detected paani aur gaon ek hi map pe saath dikhein. Yehi to poora point hai.
   const snapshot = mode === 'replay' ? replay.snapshots[day] : live.snapshot
 
   const loading = mode === 'replay' ? replay.loading : live.loading
@@ -87,6 +96,31 @@ export default function App() {
   }, [refreshOps])
 
   /**
+   * SOS ka status badalna (Acknowledge / Mark handled / Reopen).
+   * Hook optimistic update karta hai; yahan sirf fail hone pe toast dikhate hain —
+   * chup-chaap fail hona sabse bura hota, officer samajhta ki kaam ho gaya.
+   */
+  const handleReliefStatus = useCallback(
+    async (id, status) => {
+      try {
+        await setReliefStatus(id, status)
+        showToast({
+          text:
+            status === 'inprogress'
+              ? 'Marked in progress'
+              : status === 'done'
+                ? 'Marked handled'
+                : 'Request reopened',
+          type: 'ok',
+        })
+      } catch (err) {
+        showToast({ text: err.message, type: 'error' })
+      }
+    },
+    [setReliefStatus, showToast],
+  )
+
+  /**
    * Mode badalna.
    * Live mein jaate hi auto-play band karte hain — warna background mein timer chalta
    * rehta aur wapas replay pe aane pe din achanak kood jaata.
@@ -97,8 +131,18 @@ export default function App() {
   }, [])
 
   // Escape se drawer band — keyboard se chalane wale officer ke liye.
+  //
+  // Koi bhi modal khula ho to drawer ko haath mat lagao: Escape sabse UPAR wali cheez
+  // band karta hai, ye expected behaviour hai. Har modal apna Escape khud sunta hai
+  // (useEscapeKey), yahan hum sirf DOM se pooch lete hain ki koi overlay khula to nahi.
+  // Har modal ka state App tak laane se ek naya modal banate waqt wo connection jodna
+  // bhool jaana aasan hota — DOM check kabhi purana nahi padta.
   useEffect(() => {
-    const onKey = (e) => e.key === 'Escape' && setSelected(null)
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return
+      if (document.querySelector('.modal-ov')) return
+      setSelected(null)
+    }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [])
@@ -115,19 +159,46 @@ export default function App() {
 
   /** Replay ka phase (Normal / Rising / Peak / Receding) — asli data se derive. */
   const phase = useMemo(
-    () => (mode === 'replay' ? derivePhase(replay.snapshots, day) : { label: 'Live', tone: 'green' }),
-    [replay.snapshots, day, mode],
+    () =>
+      mode === 'replay'
+        ? derivePhase(replay.snapshots, day)
+        : { label: isSat ? 'Satellite' : 'Live', tone: 'green' },
+    [replay.snapshots, day, mode, isSat],
   )
 
   /** Map ke upar ka subtitle. */
-  const mapSubtitle =
-    mode === 'replay'
+  const mapSubtitle = isSat
+    ? sar.result
+      ? `Sentinel-1 SAR · ${sar.result.scene} · ${sar.result.detection.flooded_area_sq_km} sq km detected`
+      : 'Sentinel-1 SAR · select a scene and run detection'
+    : mode === 'replay'
       ? `Replay · ${dayLabel(replay.days[day])}`
       : snapshot?.data_ok === false
         ? 'Live · rainfall data unavailable'
         : 'Live · Open-Meteo'
 
-  const reliefNew = ops.relief?.counts.new ?? 0
+  /**
+   * Send-alert dialog ke liye gaon ki list.
+   *
+   * Normally wahi snapshot jo map dikha raha hai — dono ek hi baat bolne chahiye.
+   * Satellite tab pe live snapshot lazy hai (useDashboardData sirf mode==='live' pe
+   * fetch karta hai), to wahan replay ke current din pe girte hain — warna dialog
+   * khaali khulta.
+   *
+   * riskSource snapshot ke APNE `mode` field se banta hai, hamare UI mode se nahi.
+   * KYUN: officer ko dikhna chahiye ki jo risk level wo dialog mein dekh raha hai wo
+   * KIS data ka hai. Replay ka risk dekh ke asli alert bhejna ek asli galti hai —
+   * usko chhupana nahi chahiye.
+   */
+  const alertSnapshot = snapshot || replay.snapshots[day] || replay.snapshots[0] || null
+  const alertVillages = alertSnapshot?.villages || []
+  const riskSource = alertSnapshot
+    ? alertSnapshot.mode === 'replay'
+      ? `Replay 2022 · ${dayLabel(alertSnapshot.date)}`
+      : 'Live · Open-Meteo'
+    : 'no data yet'
+  const atRiskCount = alertVillages.filter((v) => v.risk.level !== 'green').length
+
 
   return (
     <>
@@ -138,6 +209,8 @@ export default function App() {
         onThemeToggle={toggle}
         // data_ok false => Open-Meteo se data nahi mila. Badge amber ho jaata hai.
         liveStale={mode === 'live' && snapshot?.data_ok === false}
+        onSendAlert={() => setAlertOpen(true)}
+        atRiskCount={atRiskCount}
       />
 
       {/* Error dikhane ka tareeka: poora dashboard blank karne ke bajaye ek patti upar.
@@ -157,18 +230,53 @@ export default function App() {
         alerts={ops.alerts}
         sessionAlerts={sessionAlerts}
         loading={loading || !snapshot}
+        // Satellite mode mein KPI strip SAR ke numbers dikhata hai.
+        // KYUN: us tab pe "Danger zones 0" (live risk se) irrelevant aur confusing hai —
+        // officer us waqt scene dekh raha hai, village risk nahi.
+        sar={isSat ? { result: sar.result, model: sar.model, running: sar.running } : null}
       />
 
       <div className="grid">
         {/* ---------------- LEFT: risk distribution + rainfall bars ---------------- */}
         <div className="col">
-          <Panel title="Risk distribution" Icon={IconChartDonut} style={{ flex: '0 0 auto' }}>
-            <RiskDonut summary={snapshot?.summary} loading={loading || !snapshot} />
-          </Panel>
+          {isSat ? (
+            <Panel title="SAR flood detection" Icon={IconSatellite} style={{ flex: 1 }}>
+              <SatellitePanel
+                scenes={sar.scenes}
+                model={sar.model}
+                selected={sar.selected}
+                onSelectScene={sar.selectScene}
+                onDetect={sar.detect}
+                running={sar.running}
+                result={sar.result}
+                error={sar.error}
+              />
+            </Panel>
+          ) : (
+            <>
+              <Panel
+                title="Risk distribution"
+                subtitle="How many villages sit at each level right now"
+                Icon={IconChartDonut}
+                style={{ flex: '0 0 auto' }}
+              >
+                <RiskDonut summary={snapshot?.summary} loading={loading || !snapshot} />
+              </Panel>
 
-          <Panel title="Rainfall by village" Icon={IconChartBar} style={{ flex: 1 }}>
-            <RainfallBar villages={snapshot?.villages} loading={loading || !snapshot} isDark={isDark} />
-          </Panel>
+              <Panel
+                title="Rainfall by village"
+                subtitle="Last 24 hours · heaviest first"
+                Icon={IconChartBar}
+                style={{ flex: 1, minHeight: 200 }}
+              >
+                <RainfallBar
+                  villages={snapshot?.villages}
+                  loading={loading || !snapshot}
+                  isDark={isDark}
+                />
+              </Panel>
+            </>
+          )}
         </div>
 
         {/* ---------------- CENTER: map + 12-day trend ---------------- */}
@@ -180,12 +288,18 @@ export default function App() {
             onSelect={setSelected}
             isDark={isDark}
             drawerOpen={!!selectedVillage}
+            waterGeoJson={isSat ? sar.result?.geojson : null}
+            fitBounds={isSat ? sar.result?.detection?.bounds : null}
           />
 
           <Panel
             title="Rainfall & people at risk · 12-day trend"
             Icon={IconChartLine}
             style={{ flex: '0 0 180px' }}
+            /* Chart canvas kabhi-kabhi 1px zyada naapta hai aur poore panel pe scrollbar
+               aa jaata hai. Yahan scroll karne ko kuch hai hi nahi — chart body ke saath
+               resize hota hai. */
+            bodyStyle={{ overflow: 'hidden' }}
           >
             <TrendChart
               snapshots={replay.snapshots}
@@ -198,38 +312,33 @@ export default function App() {
           </Panel>
         </div>
 
-        {/* ---------------- RIGHT: relief + activity ---------------- */}
-        <div className="col">
-          <Panel
-            title="Relief requests"
-            Icon={IconLifebuoy}
-            style={{ flex: '0 0 auto', maxHeight: '44%' }}
-            bodyStyle={{ padding: '4px 13px' }}
-            right={
-              reliefNew > 0 ? (
-                <span style={{ fontSize: 10.5, color: 'var(--red)', fontWeight: 600 }}>
-                  {reliefNew} new
-                </span>
-              ) : null
-            }
-          >
-            <ReliefList relief={ops.relief} loading={!ops.relief && !ops.error} />
-          </Panel>
+        {/* ---------------- RIGHT: relief (priority) + activity ----------------
 
-          <Panel
-            title="Activity feed"
-            Icon={IconActivity}
-            style={{ flex: 1 }}
-            bodyStyle={{ padding: 0 }}
-          >
-            <ActivityFeed
-              relief={ops.relief}
-              alerts={ops.alerts}
-              snapshot={snapshot}
-              mode={mode}
-              loading={!ops.alerts && !ops.error}
-            />
-          </Panel>
+            LAYOUT KYUN BADLA: pehle relief `maxHeight: 44%` pe tha aur activity `flex:1`.
+            Do chhote scroll box ek doosre ke upar — dono mein cards beech se kat rahe the,
+            aur officer ko dono mein alag-alag scroll karna padta tha.
+
+            Ab dono ko flex-basis se hissa milta hai (57/43) aur dono ka min-height fix hai,
+            to koi bhi panel itna chhota nahi ho sakta ki ek poora card na sama sake.
+            Relief ko zyada hissa isliye ki wo ACTION panel hai — activity sirf padhne ke
+            liye hai. Jo cheez panel mein nahi samati, uske liye relief ka "View all" hai;
+            chup-chaap kaat dena sabse bura option tha. */}
+        <div className="col">
+          <ReliefPanel
+            relief={ops.relief}
+            loading={!ops.relief && !ops.error}
+            onStatus={handleReliefStatus}
+            style={{ flex: '1 1 57%', minHeight: 190 }}
+          />
+
+          <ActivityPanel
+            relief={ops.relief}
+            alerts={ops.alerts}
+            snapshot={snapshot}
+            mode={mode}
+            loading={!ops.alerts && !ops.error}
+            style={{ flex: '1 1 43%', minHeight: 150 }}
+          />
         </div>
       </div>
 
@@ -240,7 +349,17 @@ export default function App() {
         playing={playing}
         onPlayToggle={() => setPlaying((p) => !p)}
         phase={phase}
-        disabled={mode === 'live' || replay.loading}
+        disabled={mode !== 'replay' || replay.loading}
+        /* Data honesty chip (data/DATA_NOTES.md ka rule). Mockup mein yahan "MOCKUP ·
+           dummy data" likha tha. Ab data asli API se aata hai, par replay ka 2022 data
+           representative hai — isliye source hamesha screen pe likha rehta hai. */
+        note={
+          isSat
+            ? 'Sentinel-1 SAR · Sen1Floods11 test split (unseen in training)'
+            : mode === 'replay'
+              ? 'Assam 2022 replay · representative demo data'
+              : 'Live rainfall · Open-Meteo'
+        }
       />
 
       <VillageDrawer
@@ -254,17 +373,16 @@ export default function App() {
         onToast={showToast}
       />
 
-      <Toast toast={toast} />
+      <SendAlertDialog
+        open={alertOpen}
+        onClose={() => setAlertOpen(false)}
+        villages={alertVillages}
+        riskSource={riskSource}
+        onSent={handleAlertSent}
+        onToast={showToast}
+      />
 
-      {/* Data honesty chip (data/DATA_NOTES.md ka rule).
-          Mockup mein yahan "MOCKUP · dummy data" likha tha. Ab data asli API se aata hai,
-          par replay ka 2022 data representative hai — isliye source saaf likha rehta hai.
-          Judge ke saamne screen pe hi likha ho, ye sabse imandaar tareeka hai. */}
-      <div className="data-flag">
-        {mode === 'replay'
-          ? 'Assam 2022 replay · representative demo data'
-          : 'Live rainfall · Open-Meteo'}
-      </div>
+      <Toast toast={toast} />
     </>
   )
 }

@@ -8,26 +8,30 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.ui.Alignment
+import com.blackbox.jalrakshak.ui.components.AppText
+import com.blackbox.jalrakshak.ui.components.OfflineBanner
+import com.blackbox.jalrakshak.ui.map.OfflineMapScreen
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.Translate
-import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -36,8 +40,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blackbox.jalrakshak.core.Config
@@ -51,7 +53,6 @@ import com.blackbox.jalrakshak.ui.screens.SosSheet
 import com.blackbox.jalrakshak.ui.screens.VillagePickerScreen
 import com.blackbox.jalrakshak.ui.screens.collectAsStateSafe
 import com.blackbox.jalrakshak.ui.theme.JalRakshakTheme
-import com.blackbox.jalrakshak.ui.theme.riskColor
 
 /**
  * =====================================================================================
@@ -168,9 +169,13 @@ private fun JalRakshakApp(openAlerts: Boolean, onAlertsOpened: () -> Unit) {
     val prefsLoaded by vm.prefsLoaded.collectAsStateSafe()
     val lang by vm.lang.collectAsStateSafe()
     val village by vm.village.collectAsStateSafe()
+    val offline by vm.offline.collectAsStateSafe()
+    val shelters by vm.shelters.collectAsStateSafe()
 
     var tab by remember { mutableStateOf(Tab.HOME) }
     var showSos by remember { mutableStateOf(false) }
+    // Offline map screen (shelter "Directions" se khulta hai)
+    var showMap by remember { mutableStateOf(false) }
     // Gaon chuna hua ho par user "gaon badlein" dabaye — tab picker dobara dikhana hai.
     var forcePicker by remember { mutableStateOf(false) }
 
@@ -195,81 +200,53 @@ private fun JalRakshakApp(openAlerts: Boolean, onAlertsOpened: () -> Unit) {
 
         // Gaon chuna hi nahi (pehli launch) ya user badalna chahta hai.
         if (villageId == null || forcePicker) {
-            VillagePickerScreen(vm) { forcePicker = false }
+            VillagePickerScreen(
+                vm = vm,
+                onSelected = { forcePicker = false },
+                // Pehli launch pe back nahi (gaon chunna zaroori hai). "Gaon badlein"
+                // se aaye ho to back milta hai — bina badle wapas ja sako.
+                onBack = if (villageId != null) ({ forcePicker = false }) else null,
+            )
             return@CompositionLocalProvider
         }
 
+        // Offline map — poori screen leta hai (apna back button andar hai).
+        val v = village
+        if (showMap && v != null) {
+            OfflineMapScreen(village = v, shelters = shelters, onBack = { showMap = false })
+            return@CompositionLocalProvider
+        }
+
+        /**
+         * ============ CHROME: mockup ke hisaab se ============
+         *  TopAppBar HATA diya — mockup mein har screen apna heading khud rakhti hai
+         *  (Home pe gaon ka naam + bhasha, Alerts pe bada "Alerts"). Ek extra app bar
+         *  screen ki jagah khaata aur design se match nahi karta.
+         *
+         *  FAB bhi hataya — mockup mein SOS ek full-width inline button hai jo content
+         *  ke saath scroll hota hai. Functionality wahi hai, bas jagah design wali.
+         *
+         *  Offline banner ab sabse upar hai (mockup ka `.off`) — pehle wo Home screen
+         *  ke andar tha. Upar hone se wo har tab pe dikhta hai, jo zyada sahi hai.
+         * ====================================================
+         */
         Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(s.appName, fontWeight = FontWeight.SemiBold)
-                    },
-                    navigationIcon = {
-                        Icon(
-                            Icons.Outlined.WaterDrop, null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(start = 14.dp),
-                        )
-                    },
-                    actions = {
-                        /**
-                         * Bhasha toggle — HI / EN.
-                         * KYUN plain text button (dropdown nahi): sirf DO bhasha hain
-                         * (BUILD_PLAN section 2 LOCKED). Do options ke liye dropdown
-                         * kholna ek faltu tap hai. Ek tap = bhasha badal gayi.
-                         */
-                        TextButton(onClick = { vm.setLang(if (lang == Lang.HI) Lang.EN else Lang.HI) }) {
-                            Icon(Icons.Outlined.Translate, null, modifier = Modifier.padding(end = 6.dp))
-                            Text(
-                                if (lang == Lang.HI) "EN" else "हिं",
-                                fontWeight = FontWeight.SemiBold,
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                    ),
-                )
-            },
-            bottomBar = {
-                NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
-                    NavigationBarItem(
-                        selected = tab == Tab.HOME,
-                        onClick = { tab = Tab.HOME },
-                        icon = { Icon(Icons.Outlined.WaterDrop, null) },
-                        label = { Text(s.tabHome) },
-                    )
-                    NavigationBarItem(
-                        selected = tab == Tab.ALERTS,
-                        onClick = { tab = Tab.ALERTS },
-                        icon = { Icon(Icons.Outlined.Notifications, null) },
-                        label = { Text(s.tabAlerts) },
-                    )
-                }
-            },
-            floatingActionButton = {
-                /**
-                 * SOS button — hamesha dikhta hai, dono tab pe.
-                 * KYUN FAB (menu mein chhupa hua nahi): flood mein ye sabse urgent action
-                 * hai. Do tap ki doori pe nahi hona chahiye. Rang RED — aur poori app
-                 * mein yahi ek laal button hai, isliye galti se nahi dabega.
-                 */
-                ExtendedFloatingActionButton(
-                    onClick = { showSos = true },
-                    containerColor = riskColor("red"),
-                    contentColor = Color.White,
-                    shape = RoundedCornerShape(14.dp),
-                ) {
-                    Icon(Icons.Outlined.Notifications, null, modifier = Modifier.padding(end = 8.dp))
-                    Text(s.sos, fontWeight = FontWeight.SemiBold)
-                }
-            },
+            containerColor = MaterialTheme.colorScheme.background,
+            bottomBar = { BottomNav(tab, s) { tab = it } },
         ) { inner ->
-            Box(Modifier.fillMaxSize().padding(inner)) {
-                when (tab) {
-                    Tab.HOME -> HomeScreen(vm) { forcePicker = true }
-                    Tab.ALERTS -> AlertsScreen(vm)
+            Column(Modifier.fillMaxSize().padding(inner)) {
+                if (offline) OfflineBanner(village?.cachedAt)
+
+                Box(Modifier.weight(1f)) {
+                    when (tab) {
+                        Tab.HOME -> HomeScreen(
+                            vm = vm,
+                            onChangeVillage = { forcePicker = true },
+                            onSos = { showSos = true },
+                            onOpenMap = { showMap = true },
+                        )
+                        Tab.ALERTS -> AlertsScreen(vm)
+                    }
                 }
             }
         }
@@ -277,5 +254,77 @@ private fun JalRakshakApp(openAlerts: Boolean, onAlertsOpened: () -> Unit) {
         if (showSos && village != null) {
             SosSheet(vm) { showSos = false }
         }
+    }
+}
+
+/**
+ * BottomNav — mockup ka `.nav`.
+ *
+ * Card background, upar 1px border, line icons, active item BLUE.
+ * Material ka NavigationBar use nahi kiya kyunki wo apna pill-shaped indicator aur
+ * elevation le aata hai — mockup bilkul flat hai.
+ *
+ * ---- MOCKUP MEIN 4 TABS HAIN, YAHAN 2 KYUN ----
+ * Mockup mein Home · Alerts · Shelter · Profile dikhte hain. App mein abhi sirf do
+ * screens hain. Shelter aur Profile add karna matlab NAYE screens banana — aur ye
+ * task "visual only, koi behaviour change nahi" tha.
+ *
+ * Dead tabs dikhana (jo tap pe kuch na karein) demo mein isse bhi bura hota. Isliye
+ * abhi wahi do tabs hain jo asli hain. (Shelter/Profile aage jodna aasan hai — shelter
+ * list already API se aati hai, aur profile mein bhasha + gaon badalna aa sakta hai.)
+ */
+@Composable
+private fun BottomNav(
+    current: Tab,
+    s: com.blackbox.jalrakshak.core.Strings,
+    onSelect: (Tab) -> Unit,
+) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .background(com.blackbox.jalrakshak.ui.theme.CardBg)
+            .padding(top = 1.dp)
+            .padding(top = 11.dp, bottom = 20.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+    ) {
+        NavItem(
+            icon = Icons.Outlined.Home,
+            label = s.tabHome,
+            active = current == Tab.HOME,
+        ) { onSelect(Tab.HOME) }
+
+        NavItem(
+            icon = Icons.Outlined.Notifications,
+            label = s.tabAlerts,
+            active = current == Tab.ALERTS,
+        ) { onSelect(Tab.ALERTS) }
+    }
+}
+
+@Composable
+private fun NavItem(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    active: Boolean,
+    onClick: () -> Unit,
+) {
+    val tint = if (active) {
+        com.blackbox.jalrakshak.ui.theme.Blue
+    } else {
+        com.blackbox.jalrakshak.ui.theme.Ink3
+    }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier
+            .clickable(
+                // Ripple hata diya — mockup flat hai, aur nav pe ripple bhaari lagta hai.
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+            ) { onClick() }
+            .padding(horizontal = 24.dp),
+    ) {
+        Icon(icon, null, tint = tint, modifier = Modifier.size(21.dp))
+        AppText(label, style = MaterialTheme.typography.labelSmall, color = tint)
     }
 }

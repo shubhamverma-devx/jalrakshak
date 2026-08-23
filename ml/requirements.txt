@@ -1,0 +1,17 @@
+# B1 — SAR flood segmentation
+#
+# Local (MacBook M-series): PyTorch apne aap MPS (Metal) use karega — alag kuch nahi chahiye.
+# Colab: torch/torchvision pehle se hain, sirf baaki install karo (ml/README.md dekho).
+
+torch>=2.2
+torchvision>=0.17
+segmentation-models-pytorch>=0.3.3
+rasterio>=1.3            # GeoTIFF + georeferencing (area hisaab ke liye zaroori)
+numpy>=1.24
+scikit-learn>=1.3
+matplotlib>=3.7
+tqdm>=4.66
+
+# Notebook chalane ke liye
+jupyter>=1.0
+nbconvert>=7.0

@@ -2,6 +2,7 @@ package com.blackbox.jalrakshak.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.NotificationsNone
+import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,29 +24,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.blackbox.jalrakshak.MainViewModel
 import com.blackbox.jalrakshak.core.Lang
 import com.blackbox.jalrakshak.core.LocalLang
 import com.blackbox.jalrakshak.core.LocalStrings
+import com.blackbox.jalrakshak.ui.components.AppText
+import com.blackbox.jalrakshak.ui.components.AppCard
 import com.blackbox.jalrakshak.ui.components.EmptyState
-import com.blackbox.jalrakshak.ui.components.OfflineBanner
-import com.blackbox.jalrakshak.ui.components.Panel
+import com.blackbox.jalrakshak.ui.theme.Ink2
+import com.blackbox.jalrakshak.ui.theme.Ink3
+import com.blackbox.jalrakshak.ui.theme.Red
+import com.blackbox.jalrakshak.ui.theme.RedBg
 
 /**
- * AlertsScreen — officer ne is gaon ko jo chetavaniyan bheji, unki list.
+ * AlertsScreen — app_mockup.html ka "Alerts" screen.
  *
- * DATA: Room cache (Repository.observeAlerts) — jo /api/alerts se bhara jaata hai.
+ * Mockup ka `.al` card: chhota rangeen icon badge + title + timestamp (right) + message.
  *
- * KYUN YE SCREEN, JAB PUSH NOTIFICATION AATA HI HAI:
- *  Notification swipe ho jaata hai, ya phone silent tha, ya battery band thi. Alert
- *  KAHIN reh jaana chahiye jahan citizen use dobara padh sake. Aur ye list OFFLINE bhi
- *  kaam karti hai (Room se) — network jaane ke baad bhi aakhri chetavani padhi ja sakti
- *  hai. Yehi "SMS se aage" ka ek hissa hai: SMS bhi rehta hai, par usmein "kya karo"
- *  aur shelter nahi hota.
+ * DATA MAPPING (jo humare paas hai, wahi dikhate hain):
+ *   badge   -> laal warning icon (alert matlab hi chetavani hai)
+ *   title   -> `sent_by` (jaise "DC Barpeta") — kis officer ne bheja
+ *   time    -> `sent_at`
+ *   message -> chuni hui bhasha ka message
  *
- * Push tap karke aane pe app seedha isi tab pe khulti hai (MainActivity dekho).
+ * KYUN title mein sender: mockup mein "Flood warning" / "Stay alert" jaisa title hai,
+ * par hamare alerts mein per-alert severity ka koi field hai hi nahi. Wo severity
+ * banana matlab data invent karna. Sender asli hai, aur officer ka naam dikhna
+ * bharosa bhi badhata hai.
  */
 @Composable
 fun AlertsScreen(vm: MainViewModel) {
@@ -52,8 +59,6 @@ fun AlertsScreen(vm: MainViewModel) {
     val lang = LocalLang.current
 
     val alerts by vm.alerts.collectAsStateSafe()
-    val offline by vm.offline.collectAsStateSafe()
-    val village by vm.village.collectAsStateSafe()
 
     if (alerts.isEmpty()) {
         Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
@@ -63,67 +68,76 @@ fun AlertsScreen(vm: MainViewModel) {
     }
 
     LazyColumn(
-        Modifier.fillMaxSize().padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+        Modifier.fillMaxSize().padding(horizontal = 20.dp),
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 20.dp),
     ) {
-        if (offline) {
-            item { OfflineBanner(village?.cachedAt) }
+        // Mockup ka bada "Alerts" heading screen ke andar hai, top bar mein nahi.
+        item {
+            AppText(
+                s.alerts,
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(top = 10.dp, bottom = 22.dp),
+            )
         }
 
         items(alerts, key = { it.id }) { alert ->
-            Panel {
+            AppCard(padding = 16.dp, modifier = Modifier.padding(bottom = 12.dp)) {
                 Row(
                     Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.Top,
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(9.dp),
                 ) {
-                    // Alert icon — accent tint (dashboard ke feed `.alert` item jaisa).
-                    Icon(
-                        Icons.Outlined.NotificationsNone, null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .background(
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
-                                RoundedCornerShape(8.dp),
-                            )
-                            .padding(6.dp)
-                            .size(18.dp),
-                    )
-
-                    Column {
-                        // Alert ka text chuni hui bhasha mein. Officer ne DONO bhasha likhi
-                        // thi (backend `message_hi` + `message_en`) — isliye yahan runtime
-                        // translation ki zaroorat hi nahi, jo flood mein galat ho sakti thi.
-                        Text(
-                            if (lang == Lang.HI) alert.messageHi else alert.messageEn,
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Medium,
-                        )
-
-                        Spacer(Modifier.height(6.dp))
-
-                        Text(
-                            "${s.from}: ${alert.sentBy}${alert.sentAt?.let { " · " + formatSentAt(it) } ?: ""}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    Box(
+                        Modifier.size(26.dp).background(RedBg, RoundedCornerShape(8.dp)),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            Icons.Outlined.WarningAmber, null,
+                            tint = Red, modifier = Modifier.size(14.dp),
                         )
                     }
+                    AppText(
+                        alert.sentBy,
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                        ),
+                        modifier = Modifier.weight(1f),
+                    )
+                    AppText(
+                        formatSentAt(alert.sentAt),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Ink3,
+                    )
                 }
+
+                Spacer(Modifier.height(8.dp))
+
+                // Officer ne DONO bhasha likhi thi (backend message_hi + message_en),
+                // isliye runtime translation ki zaroorat nahi — jo flood mein galat ho sakti thi.
+                AppText(
+                    if (lang == Lang.HI) alert.messageHi else alert.messageEn,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Ink2,
+                )
             }
         }
     }
 }
 
 /**
- * formatSentAt() — ISO timestamp ko chhote readable roop mein.
- * INPUT : "2026-08-21T14:00:15+00:00" | OUTPUT: "21 Aug, 14:00"
- * KYUN itna simple: yahan sirf "kab bheja tha" dikhana hai. Poora date-time library
- * (java.time formatting + locale) is ek line ke liye over-engineering hoti.
+ * formatSentAt() — ISO timestamp -> "21 Aug, 14:00".
+ * INPUT: "2026-08-21T14:00:15+00:00" | OUTPUT: chhota readable string
  */
-private fun formatSentAt(iso: String): String = runCatching {
-    val date = iso.substringBefore('T')          // 2026-08-21
-    val time = iso.substringAfter('T').take(5)   // 14:00
-    val (_, m, d) = date.split("-")
-    val months = listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-    "${d.toInt()} ${months[m.toInt() - 1]}, $time"
-}.getOrDefault(iso)
+private fun formatSentAt(iso: String?): String {
+    if (iso == null) return ""
+    return runCatching {
+        val date = iso.substringBefore('T')
+        val time = iso.substringAfter('T').take(5)
+        val (_, m, d) = date.split("-")
+        val months = listOf(
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+        )
+        "${d.toInt()} ${months[m.toInt() - 1]}, $time"
+    }.getOrDefault(iso)
+}

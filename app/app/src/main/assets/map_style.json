@@ -1,0 +1,52 @@
+{
+  "version": 8,
+  "name": "JalRakshak offline",
+  "sources": {
+    "protomaps": {
+      "type": "vector",
+      "url": "{{PMTILES_URL}}",
+      "attribution": "© OpenStreetMap contributors, Protomaps"
+    }
+  },
+  "layers": [
+    { "id": "bg", "type": "background", "paint": { "background-color": "#eef0f4" } },
+
+    { "id": "earth", "type": "fill", "source": "protomaps", "source-layer": "earth",
+      "paint": { "fill-color": "#f6f7f9" } },
+
+    { "id": "landuse", "type": "fill", "source": "protomaps", "source-layer": "landuse",
+      "filter": ["in", "kind", "park", "forest", "wood", "nature_reserve", "grass", "farmland"],
+      "paint": { "fill-color": "#e8efe6" } },
+
+    { "id": "water", "type": "fill", "source": "protomaps", "source-layer": "water",
+      "paint": { "fill-color": "#b9d6ea" } },
+
+    { "id": "roads-minor", "type": "line", "source": "protomaps", "source-layer": "roads",
+      "filter": ["in", "kind", "minor_road", "other", "path"],
+      "paint": {
+        "line-color": "#e3e6ec",
+        "line-width": ["interpolate", ["linear"], ["zoom"], 10, 0.4, 14, 1.6]
+      } },
+
+    { "id": "roads-medium", "type": "line", "source": "protomaps", "source-layer": "roads",
+      "filter": ["==", "kind", "medium_road"],
+      "paint": {
+        "line-color": "#dfe3ea",
+        "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.6, 14, 2.6]
+      } },
+
+    { "id": "roads-major", "type": "line", "source": "protomaps", "source-layer": "roads",
+      "filter": ["in", "kind", "major_road", "highway"],
+      "paint": {
+        "line-color": "#cfd6e0",
+        "line-width": ["interpolate", ["linear"], ["zoom"], 6, 0.8, 14, 3.6]
+      } },
+
+    { "id": "boundaries", "type": "line", "source": "protomaps", "source-layer": "boundaries",
+      "paint": { "line-color": "#c8cedb", "line-dasharray": [3, 2], "line-width": 0.8 } },
+
+    { "id": "buildings", "type": "fill", "source": "protomaps", "source-layer": "buildings",
+      "minzoom": 12,
+      "paint": { "fill-color": "#e6e9ef" } }
+  ]
+}

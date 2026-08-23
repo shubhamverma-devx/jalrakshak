@@ -4,62 +4,58 @@ import androidx.compose.ui.graphics.Color
 
 /**
  * =====================================================================================
- *  Palette — officer dashboard (mockup_v2.html) se EXACT match.
+ *  Palette — app_mockup.html (approved design) se EXACT hex.
  * =====================================================================================
- *  KYUN bilkul wahi rang: officer dashboard pe gaon RED dekhta hai aur citizen apne
- *  phone pe bhi wahi RED dekhta hai. Ek hi rang ka matlab dono taraf ek jaisa hona
- *  chahiye — warna phone pe baat karte waqt confusion hoti hai ("mujhe to peela dikh
- *  raha hai"). Flood mein ye confusion mehngi padti hai.
- *
- *  Muted, professional, flat — koi gradient nahi, koi chamakdaar rang nahi.
+ *  Ye officer dashboard ke palette se ALAG hai, aur jaan-bujh ke:
+ *   - Dashboard control-room screen hai — dark, muted, ghanton dekhna padta hai
+ *   - App gaon mein, dhoop mein, jaldi mein dekhi jaati hai — light aur high contrast
+ *  Risk ka MATLAB dono jagah same rehta hai (laal = khatra), bas shade alag hai.
  * =====================================================================================
  */
 
-// --- Risk levels (dono theme mein same — inka matlab fix hai) ---
-val RiskRed = Color(0xFFC85450)
-val RiskAmber = Color(0xFFC79445)
-val RiskGreen = Color(0xFF5B9A6B)
+// --- surfaces (mockup :root) ---
+val Bg = Color(0xFFEEF0F4)        // --bg   screen background
+val CardBg = Color(0xFFFBFCFD)    // --card
+val Line = Color(0xFFDFE3EA)      // --line borders + dividers
 
-// --- Accent ---
-val Accent = Color(0xFF3B6EA5)
-val Accent2 = Color(0xFF4B82BE)
+// --- text ---
+val Ink = Color(0xFF101828)       // --ink   primary
+val Ink2 = Color(0xFF667085)      // --ink2  secondary
+val Ink3 = Color(0xFF98A2B3)      // --ink3  tertiary / icons
 
-// --- Light theme (dashboard ka [data-theme="light"]) ---
-val LightBg = Color(0xFFE4E8EE)
-val LightPanel = Color(0xFFF4F6F9)
-val LightPanel2 = Color(0xFFEAEEF3)
-val LightInk = Color(0xFF1C2430)
-val LightInk2 = Color(0xFF5A6675)
-val LightInk3 = Color(0xFF8794A4)
-val LightLine = Color(0xFFD3DAE3)
+// --- risk levels + tints ---
+val Red = Color(0xFFD92D20)       // --red
+val RedBg = Color(0xFFFEF3F2)     // --red-bg
+val Green = Color(0xFF039855)     // --green
+val GreenBg = Color(0xFFECFDF3)   // --green-bg
+val Amber = Color(0xFFDC6803)     // --amber
+val AmberBg = Color(0xFFFFFAEB)   // --amber-bg
 
-// --- Dark theme (dashboard ka [data-theme="dark"]) ---
-val DarkBg = Color(0xFF0D1117)
-val DarkPanel = Color(0xFF141A22)
-val DarkPanel2 = Color(0xFF10151C)
-val DarkInk = Color(0xFFDFE5EC)
-val DarkInk2 = Color(0xFF8B97A7)
-val DarkInk3 = Color(0xFF5B6675)
-val DarkLine = Color(0xFF232C38)
+val Blue = Color(0xFF175CD3)      // --blue  bottom-nav active
 
-/**
- * Risk level ka background tint (dashboard ke --red-bg / --amber-bg / --green-bg).
- * Alpha alag hai light aur dark ke liye — dark mein zyada alpha chahiye warna tint
- * dikhta hi nahi.
- */
-fun riskTint(level: String, isDark: Boolean): Color {
-    val base = riskColor(level)
-    return base.copy(alpha = if (isDark) 0.13f else 0.11f)
-}
+// --- offline banner (mockup .off) ---
+val OfflineBg = Color(0xFFFFFAEB)
+val OfflineLine = Color(0xFFFEDF89)
+val OfflineInk = Color(0xFFB54708)
+
+/** Neutral chip/badge fill — mockup ke `.dot.n` aur `.shrow .si` mein #e9ecf1. */
+val Neutral = Color(0xFFE9ECF1)
 
 /**
  * riskColor() — backend ka level string -> rang.
- * INPUT : "red" | "yellow" | "green" | OUTPUT: Color
- * KYUN yahan mapping: app kahin bhi apna faisla nahi karti ki kaunsa level hai —
- * wo backend ka kaam hai (RiskEngine). Yahan sirf naam se rang mila rahe hain.
+ * INPUT: "red" | "yellow" | "green" | OUTPUT: Color
+ * App khud kabhi level decide nahi karti — wo RiskEngine ka kaam hai. Yahan sirf naam se
+ * rang mila rahe hain.
  */
 fun riskColor(level: String): Color = when (level) {
-    "red" -> RiskRed
-    "yellow" -> RiskAmber
-    else -> RiskGreen
+    "red" -> Red
+    "yellow" -> Amber
+    else -> Green
+}
+
+/** riskTint() — usi level ka halka background (status circle, badge). */
+fun riskTint(level: String): Color = when (level) {
+    "red" -> RedBg
+    "yellow" -> AmberBg
+    else -> GreenBg
 }

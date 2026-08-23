@@ -1,7 +1,10 @@
 package com.blackbox.jalrakshak.ui.screens
 
 import android.Manifest
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.LocationOff
 import androidx.compose.material3.Button
@@ -32,6 +36,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import com.blackbox.jalrakshak.ui.components.AppText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.blackbox.jalrakshak.MainViewModel
@@ -100,16 +106,41 @@ fun SosSheet(vm: MainViewModel, onDismiss: () -> Unit) {
                             tint = riskColor("green"),
                             modifier = Modifier.size(28.dp),
                         )
-                        Text(s.sosSent, style = MaterialTheme.typography.titleMedium)
+                        AppText(s.sosSent, style = MaterialTheme.typography.titleMedium)
                     }
                     Spacer(Modifier.height(20.dp))
                 }
 
                 // ---------- form ----------
                 else -> {
-                    Text(s.sosTitle, style = MaterialTheme.typography.titleLarge)
+                    // Explicit close — drag-to-dismiss discoverable nahi hai, khaas kar
+                    // us user ke liye jo pehli baar smartphone use kar raha ho.
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        AppText(
+                            s.sosTitle,
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.weight(1f),
+                        )
+                        Box(
+                            Modifier
+                                .size(34.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(com.blackbox.jalrakshak.ui.theme.Neutral)
+                                .clickable { vm.resetSos(); onDismiss() },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                Icons.Outlined.Close, null,
+                                tint = com.blackbox.jalrakshak.ui.theme.Ink,
+                                modifier = Modifier.size(18.dp),
+                            )
+                        }
+                    }
                     Spacer(Modifier.height(4.dp))
-                    Text(
+                    AppText(
                         s.sosSub,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -120,7 +151,7 @@ fun SosSheet(vm: MainViewModel, onDismiss: () -> Unit) {
                     OutlinedTextField(
                         value = message,
                         onValueChange = { message = it; showEmptyError = false },
-                        placeholder = { Text(s.sosMessageHint) },
+                        placeholder = { AppText(s.sosMessageHint) },
                         minLines = 3,
                         maxLines = 5,
                         isError = showEmptyError,
@@ -130,7 +161,7 @@ fun SosSheet(vm: MainViewModel, onDismiss: () -> Unit) {
                     )
 
                     if (showEmptyError) {
-                        Text(
+                        AppText(
                             s.sosEmptyMessage,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error,
@@ -154,21 +185,21 @@ fun SosSheet(vm: MainViewModel, onDismiss: () -> Unit) {
                             tint = if (granted) riskColor("green") else MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(16.dp),
                         )
-                        Text(
+                        AppText(
                             if (granted) s.locationAttached else s.locationMissing,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         if (!granted) {
                             TextButton(onClick = { locationPermission.launchPermissionRequest() }) {
-                                Text("GPS")
+                                AppText("GPS")
                             }
                         }
                     }
 
                     if (st is MainViewModel.SosState.Failed) {
                         Spacer(Modifier.height(8.dp))
-                        Text(
+                        AppText(
                             "${s.sosFailed}${if (st.message.isNotBlank()) " — ${st.message}" else ""}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error,
@@ -197,9 +228,9 @@ fun SosSheet(vm: MainViewModel, onDismiss: () -> Unit) {
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
                             Spacer(Modifier.height(0.dp))
-                            Text("  ${s.sosSending}", fontWeight = FontWeight.SemiBold)
+                            AppText("  ${s.sosSending}", fontWeight = FontWeight.SemiBold)
                         } else {
-                            Text(s.sosSend, fontWeight = FontWeight.SemiBold)
+                            AppText(s.sosSend, fontWeight = FontWeight.SemiBold)
                         }
                     }
                 }

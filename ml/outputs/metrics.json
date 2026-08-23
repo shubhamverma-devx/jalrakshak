@@ -1,0 +1,95 @@
+{
+  "dataset": "Sen1Floods11 hand-labeled (CC-BY 4.0)",
+  "splits": {
+    "train": 252,
+    "valid": 89,
+    "test": 90
+  },
+  "model": "U-Net resnet34 (ImageNet pretrained), in_ch=2",
+  "params_millions": 24.43,
+  "device": "mps",
+  "epochs_run": 40,
+  "best_epoch": 30,
+  "best_val_iou": 0.6423,
+  "threshold": 0.5,
+  "test": {
+    "iou": 0.6489,
+    "f1": 0.7871,
+    "precision": 0.8038,
+    "recall": 0.771,
+    "accuracy": 0.9478
+  },
+  "test_confusion": {
+    "tp": 1978522,
+    "fp": 482979,
+    "fn": 587579,
+    "tn": 17468287
+  },
+  "test_threshold_sweep": [
+    {
+      "threshold": 0.2,
+      "iou": 0.6337,
+      "f1": 0.7758,
+      "precision": 0.7189,
+      "recall": 0.8425,
+      "accuracy": 0.9391
+    },
+    {
+      "threshold": 0.3,
+      "iou": 0.6452,
+      "f1": 0.7843,
+      "precision": 0.7554,
+      "recall": 0.8155,
+      "accuracy": 0.9439
+    },
+    {
+      "threshold": 0.4,
+      "iou": 0.6489,
+      "f1": 0.7871,
+      "precision": 0.7814,
+      "recall": 0.7928,
+      "accuracy": 0.9463
+    },
+    {
+      "threshold": 0.5,
+      "iou": 0.6489,
+      "f1": 0.7871,
+      "precision": 0.8038,
+      "recall": 0.771,
+      "accuracy": 0.9478
+    },
+    {
+      "threshold": 0.6,
+      "iou": 0.6457,
+      "f1": 0.7847,
+      "precision": 0.826,
+      "recall": 0.7474,
+      "accuracy": 0.9487
+    },
+    {
+      "threshold": 0.7,
+      "iou": 0.6369,
+      "f1": 0.7782,
+      "precision": 0.8511,
+      "recall": 0.7168,
+      "accuracy": 0.9489
+    },
+    {
+      "threshold": 0.8,
+      "iou": 0.6197,
+      "f1": 0.7652,
+      "precision": 0.8831,
+      "recall": 0.675,
+      "accuracy": 0.9482
+    }
+  ],
+  "best_threshold_by_iou": {
+    "threshold": 0.5,
+    "iou": 0.6489,
+    "f1": 0.7871,
+    "precision": 0.8038,
+    "recall": 0.771,
+    "accuracy": 0.9478
+  },
+  "notes": "Sirf valid pixels pe metrics (-1 no-data hataya gaya). Water = positive class."
+}

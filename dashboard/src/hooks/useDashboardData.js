@@ -26,7 +26,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { getAlerts, getRelief, getVillages } from '../api/client'
+import { getAlerts, getRelief, getVillages, patchRelief } from '../api/client'
 import { POLL_MS } from '../config'
 
 export function useDashboardData(mode) {
@@ -128,6 +128,40 @@ export function useDashboardData(mode) {
   }, [loadOps])
 
   /**
+   * setReliefStatus() — ek SOS ka status badlo (acknowledge / mark handled / reopen).
+   *
+   * INPUT : id, status ('new'|'inprogress'|'done')
+   * OUTPUT: promise — fail hone pe throw karta hai (caller toast dikhata hai)
+   *
+   * KYUN OPTIMISTIC (pehle UI badalte hain, phir server): button dabane aur list badalne
+   * ke beech round-trip ka wait officer ko "click laga ya nahi?" wali shak deta hai, aur
+   * wo dobara daba deta hai. Isliye local state turant badalte hain; call fail hui to
+   * server se dobara laake asli sach wapas le aate hain (neeche catch mein loadOps).
+   *
+   * counts bhi yahin recalculate karte hain — warna chip pe "4 new" likha rehta jabki
+   * list mein 3 hi bachi hain, aur wo 30 second baad hi theek hota.
+   */
+  const setReliefStatus = useCallback(
+    async (id, status) => {
+      setOps((o) => {
+        if (!o.relief) return o
+        const requests = o.relief.requests.map((r) => (r.id === id ? { ...r, status } : r))
+        const counts = { new: 0, inprogress: 0, done: 0 }
+        requests.forEach((r) => { counts[r.status] = (counts[r.status] || 0) + 1 })
+        return { ...o, relief: { ...o.relief, requests, counts } }
+      })
+
+      try {
+        await patchRelief(id, status)
+      } catch (err) {
+        loadOps() // optimistic guess galat tha — server ka sach wapas laao
+        throw err
+      }
+    },
+    [loadOps],
+  )
+
+  /**
    * refreshOps() — turant relief/alerts dobara laao.
    * KYUN chahiye: alert bhejne ke baad 30 second wait karna bura lagta hai. Alert bhejte hi
    * ye call hota hai to feed aur KPI turant update dikhte hain.
@@ -141,7 +175,7 @@ export function useDashboardData(mode) {
     if (mode === 'live') loadLive()
   }, [loadReplay, loadOps, loadLive, mode])
 
-  return { replay, live, ops, refreshOps, retry }
+  return { replay, live, ops, refreshOps, retry, setReliefStatus }
 }
 
 /**

@@ -14,7 +14,10 @@ import androidx.room.RoomDatabase
  */
 @Database(
     entities = [CachedVillage::class, CachedAlert::class, CachedShelter::class],
-    version = 1,
+    // v2: CachedVillage mein hoursToDanger jud gaya (home screen ka "To rise" metric).
+    // fallbackToDestructiveMigration set hai aur ye sirf CACHE hai — purana data ud
+    // jaayega par sab kuch server se dobara aa jaata hai, to koi nuksan nahi.
+    version = 2,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {

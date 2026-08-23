@@ -25,6 +25,7 @@ export default function ReplaySlider({
   onPlayToggle,
   phase,
   disabled,
+  note, // data-source chip — neeche wali comment dekho
 }) {
   const timer = useRef(null)
 
@@ -77,6 +78,14 @@ export default function ReplaySlider({
       >
         {phase.label}
       </span>
+
+      {/* DATA HONESTY CHIP — pehle ye `position: fixed` tha (bottom-right corner).
+          1440x900 pe wo theek activity feed ke aakhri item ke UPAR baith jaata tha, do
+          text ek doosre pe. Ab slider bar ke andar hai, jahan khaali jagah hai — kabhi
+          kisi content ko nahi dhakta, aur hamesha dikhta bhi hai.
+          Slider disabled (live/satellite mode) hone pe bhi ye dim nahi hota — CSS mein
+          isko chhod diya gaya hai — kyunki tab bhi ye SACH bol raha hota hai. */}
+      {note && <span className="data-flag">{note}</span>}
     </div>
   )
 }

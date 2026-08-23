@@ -42,11 +42,31 @@ BUILD_PLAN.md
 DIN1_PROMPT.md
 DIN*_PROMPT.md
 
-# Design reference (approved mockup — internal)
+# Deck content + demo script — INTERNAL ONLY.
+# Ismein judge ke sawaalon ke hamare jawaab hain aur "kya NAHI bolna" ki list.
+# Ye public repo mein chala gaya to hamari poori prep saamne aa jaayegi.
+DECK_CONTENT.md
+
+# Design reference (approved mockups — internal)
+# NOTE: `mockup*.html` sirf mockup_v2.html ko pakadta tha — app_mockup.html PREFIX ke
+# saath hai, wo chhoot raha tha. Isliye dono taraf se pakadte hain.
 mockup*.html
+*mockup*.html
 
 # Data honesty notes (kya real hai, kya representative)
 data/DATA_NOTES.md
+
+# ---- ML weights — GitHub pe nahi -------------------------------------------
+# sar_unet.pth 93 MB ka hai. GitHub 100 MB pe hard-block karta hai aur 50 MB pe warn,
+# aur git history se bada file kabhi nikalta nahi — ek baar chala gaya to repo hamesha
+# ke liye bhaari. CLAUDE.md ka rule bhi yehi hai: "bade weight files git mein mat thoso —
+# link ya Git LFS use karo."
+#
+# JO CHEEZ SABOOT HAI WO JAA RAHI HAI: training notebook, metrics.json, per-region
+# results, model card aur sample outputs — sab `ml/` mein tracked hain. Sirf binary
+# weights bahar hain.
+ml/models/
+*.pth
 
 # ---- Dependencies (har sub-project ka apna .gitignore bhi hai, ye safety net hai) --
 node_modules/

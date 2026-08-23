@@ -85,6 +85,16 @@ export const getVillage = (id, mode, day, signal) =>
 /** Officer ki relief table. OUTPUT: { counts, count, requests[] } */
 export const getRelief = (signal) => request('/relief', { signal })
 
+/**
+ * Ek relief request ka status badlo (acknowledge / mark handled / reopen).
+ * INPUT : id, status ('new' | 'inprogress' | 'done')
+ * OUTPUT: { message, relief }
+ *
+ * KYUN PATCH: sirf ek field badal rahe hain, poora record replace nahi kar rahe.
+ */
+export const patchRelief = (id, status) =>
+  request(`/relief/${id}`, { method: 'PATCH', body: { status } })
+
 /** Bheje gaye alerts (feed + KPI). OUTPUT: { count, alerts[] } */
 export const getAlerts = (signal) => request('/alerts', { params: { limit: 50 }, signal })
 
@@ -95,3 +105,26 @@ export const getAlerts = (signal) => request('/alerts', { params: { limit: 50 },
  * NOTE  : `push.sent` abhi hamesha false hai — FCM Day 3 mein wire hoga. UI ise chhupata nahi.
  */
 export const postAlert = (payload) => request('/alert', { method: 'POST', body: payload })
+
+/**
+ * ============ B1 — SAR flood detection (trained model) ============
+ * NOTE: baaki saare endpoints RULE-BASED RiskEngine se aate hain. Ye do TRAINED
+ * MODEL se aate hain (U-Net, Sen1Floods11 pe train kiya). Dono alag cheezein hain —
+ * UI mein bhi ye farq saaf dikhna chahiye.
+ */
+
+/**
+ * Bundled SAR sample scenes + model provenance.
+ * OUTPUT: { scenes: [{id,label,ground_truth_water_pct,available}], model: {...} }
+ */
+export const getSarScenes = (signal) => request('/sar/scenes', { signal })
+
+/**
+ * Ek scene pe model chalao.
+ * INPUT : scene id
+ * OUTPUT: { scene, detection:{flooded_area_sq_km,water_fraction,bounds,...},
+ *           geojson, nearest_villages, model }
+ * NOTE  : pehli baar ~4 sec (asli inference), uske baad backend cache se instant.
+ */
+export const postSarDetect = (scene, signal) =>
+  request('/sar/detect', { method: 'POST', body: { scene }, signal })

@@ -22,6 +22,20 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+
+        /**
+         * Sirf do ABI rakhte hain.
+         *
+         * KYUN: MapLibre ka native lib (libmaplibre.so) har ABI ke liye ~18 MB hai.
+         * Chaaron (armeabi-v7a, arm64-v8a, x86, x86_64) rakhne se APK 95 MB ho gaya tha.
+         *   arm64-v8a -> aaj ke saare asli Android phone
+         *   x86_64    -> emulator (testing ke liye zaroori)
+         * armeabi-v7a (2016 se purane 32-bit phone) aur x86 chhod diye — hamara
+         * minSdk 26 waise bhi 2017+ hai.
+         */
+        ndk {
+            abiFilters += listOf("arm64-v8a", "x86_64")
+        }
     }
 
     buildTypes {
@@ -57,6 +71,18 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+
+    androidResources {
+        /**
+         * .pmtiles ko APK mein COMPRESS mat karo.
+         *
+         * KYUN ZAROORI HAI: PMTiles random-access format hai — MapLibre file ke andar
+         * seek karke sirf zaroori tile padhta hai. Agar asset DEFLATE ho jaaye to
+         * random access possible hi nahi rehta aur map blank aata hai.
+         * (Waise bhi andar ki tiles already gzip hain, to compress karne ka fayda bhi nahi.)
+         */
+        noCompress += "pmtiles"
     }
 }
 
@@ -106,4 +132,7 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.accompanist.permissions)
     implementation(libs.coroutines.play.services)
+
+    // Offline map (B: offline maps)
+    implementation(libs.maplibre)
 }

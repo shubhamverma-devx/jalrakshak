@@ -1,0 +1,21 @@
+# ---- Dataset — kabhi commit nahi (708 MB) -----------------------------------
+# Sen1Floods11 CC-BY hai, par 708 MB git mein daalna repo ko bekaar bhaari kar dega.
+# `python download_data.py` se koi bhi 3 minute mein dobara laa sakta hai.
+data/
+
+# ---- Trained weights (98 MB) ------------------------------------------------
+# GitHub ki 100 MB file limit ke bilkul kinare pe hai, aur har retrain pe badalta hai.
+# Repo mein METRICS aur NOTEBOOK jaate hain (wahi saboot hai ki khud train kiya) —
+# weights Release/Drive link se share karo, ya Git LFS use karo.
+models/*.pth
+models/*.pt
+models/*.onnx
+
+# ---- Python -----------------------------------------------------------------
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# NOTE: outputs/ JAAN-BUJH KE tracked hai — training curves, confusion matrix aur
+# metrics.json deck aur README ka saboot hain. Wo chhote PNG/JSON hain.

@@ -23,6 +23,7 @@
 use App\Http\Controllers\Api\AlertController;
 use App\Http\Controllers\Api\DeviceTokenController;
 use App\Http\Controllers\Api\ReliefController;
+use App\Http\Controllers\Api\SarController;
 use App\Http\Controllers\Api\ShelterController;
 use App\Http\Controllers\Api\VillageController;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,7 @@ Route::get('/shelters', [ShelterController::class, 'index']);
 // --- Relief / SOS (two-way) ---------------------------------------------------------
 Route::post('/relief', [ReliefController::class, 'store']);        // citizen bhejta hai
 Route::get('/relief', [ReliefController::class, 'index']);         // officer dekhta hai
+Route::patch('/relief/{id}', [ReliefController::class, 'update']);  // officer status badalta hai
 
 // --- Push registration (citizen app har launch pe call karti hai) -------------------
 Route::post('/register-token', [DeviceTokenController::class, 'store']);
@@ -44,6 +46,12 @@ Route::post('/register-token', [DeviceTokenController::class, 'store']);
 // --- Alerts (targeted, Hindi+English) -----------------------------------------------
 Route::post('/alert', [AlertController::class, 'store']);          // officer bhejta hai (FCM Day 3)
 Route::get('/alerts', [AlertController::class, 'index']);          // history / app ka feed
+
+// --- B1: SAR flood detection (trained U-Net) ----------------------------------------
+// NOTE: ye TRAINED MODEL hai — baaki risk endpoints rule-based RiskEngine se aate hain.
+// Do alag cheezein hain, isliye routes bhi alag rakhe hain.
+Route::get('/sar/scenes', [SarController::class, 'scenes']);
+Route::post('/sar/detect', [SarController::class, 'detect']);
 
 /**
  * GET /api/health — chhota sa status check.

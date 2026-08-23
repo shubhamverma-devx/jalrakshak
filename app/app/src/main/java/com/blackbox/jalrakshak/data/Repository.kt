@@ -89,6 +89,7 @@ class Repository(context: Context) {
                 adviceEn = r.adviceEn,
                 waterEtaHi = r.waterEtaHi,
                 waterEtaEn = r.waterEtaEn,
+                hoursToDanger = r.hoursToDanger,
                 rainfallMm = r.factors.rainfallMm,
                 riverLevelM = r.factors.riverLevelM,
                 dangerLevelM = r.factors.dangerLevelM,

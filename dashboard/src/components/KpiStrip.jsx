@@ -12,7 +12,11 @@ import {
   IconAlertTriangle,
   IconBell,
   IconLifebuoy,
+  IconRulerMeasure,
+  IconSatellite,
+  IconTargetArrow,
   IconUsers,
+  IconWaveSine,
 } from '@tabler/icons-react'
 import { num } from '../utils/format'
 
@@ -41,7 +45,70 @@ function Kpi({ tone, label, value, delta, Icon, loading }) {
   )
 }
 
-export default function KpiStrip({ snapshot, relief, alerts, sessionAlerts, loading }) {
+export default function KpiStrip({ snapshot, relief, alerts, sessionAlerts, loading, sar }) {
+  /**
+   * Satellite mode: KPI strip poori tarah SAR ke numbers dikhata hai.
+   *
+   * KYUN swap karte hain (village risk ke saath mix nahi karte): us tab pe officer ek
+   * satellite scene dekh raha hai. Wahan "Danger zones 0" (live risk se) na sirf
+   * irrelevant hai, balki khatarnak bhi — koi samajh sakta hai ki scene mein khatra
+   * nahi hai, jabki wo number scene se aaya hi nahi.
+   *
+   * Aakhri card model ka IoU hai — provenance hamesha saamne rehta hai, chhupa hua nahi.
+   */
+  if (sar) {
+    const d = sar.result?.detection
+    const m = sar.model?.metrics_at_threshold
+    const nearest = sar.result?.nearest_villages?.[0]
+    const busy = sar.running
+
+    return (
+      <div className="kpis">
+        <Kpi
+          tone="accent"
+          label="Flooded area"
+          Icon={IconWaveSine}
+          loading={busy}
+          value={d ? d.flooded_area_sq_km : '—'}
+          delta={d ? `sq km · scene is ${d.scene_area_sq_km} sq km` : 'run detection'}
+        />
+        <Kpi
+          tone="neutral"
+          label="Water coverage"
+          Icon={IconRulerMeasure}
+          loading={busy}
+          value={d ? `${(d.water_fraction * 100).toFixed(1)}%` : '—'}
+          delta={d ? `${num(d.water_pixels)} pixels at 10 m` : 'of scene'}
+        />
+        <Kpi
+          tone="green"
+          label="Mean confidence"
+          Icon={IconTargetArrow}
+          loading={busy}
+          value={d ? d.mean_confidence : '—'}
+          delta={d ? `threshold ${d.threshold}` : 'over water pixels'}
+        />
+        <Kpi
+          tone="neutral"
+          label="Nearest village"
+          Icon={IconUsers}
+          loading={busy}
+          value={nearest ? `${nearest.distance_km} km` : '—'}
+          delta={nearest ? `${nearest.name} · not a flood claim` : 'from scene centre'}
+        />
+        {/* Provenance KPI — jaan-bujh ke strip mein rakha hai, footnote mein nahi. */}
+        <Kpi
+          tone="amber"
+          label="Model IoU (test)"
+          Icon={IconSatellite}
+          loading={false}
+          value={m ? m.iou : '—'}
+          delta={sar.model ? `Sen1Floods11 · ${sar.model.trained_chips} chips` : 'trained model'}
+        />
+      </div>
+    )
+  }
+
   const s = snapshot?.summary
   const reliefPending = relief ? relief.counts.new + relief.counts.inprogress : 0
 

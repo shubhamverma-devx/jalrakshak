@@ -18,6 +18,23 @@ return [
         'key' => env('POSTMARK_API_KEY'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | ML (B1 SAR flood segmentation)
+    |--------------------------------------------------------------------------
+    | Laravel trained model ko Python subprocess se chalata hai
+    | (app/Services/SarDetectionService.php).
+    |
+    | `path`   -> ml/ folder (repo root ke andar, backend/ ke bahar)
+    | `python` -> ml/.venv ka python. venv isliye ki torch system python mein nahi hai.
+    |
+    | Droplet pe ye paths alag ho sakte hain, isliye .env se override kar sakte ho.
+    */
+    'ml' => [
+        'path' => env('ML_PATH', base_path('../ml')),
+        'python' => env('ML_PYTHON', base_path('../ml/.venv/bin/python')),
+    ],
+
     'resend' => [
         'key' => env('RESEND_API_KEY'),
     ],

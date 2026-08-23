@@ -5,10 +5,13 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -16,6 +19,7 @@ import androidx.compose.material.icons.outlined.CloudOff
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,31 +27,95 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.blackbox.jalrakshak.core.Lang
+import com.blackbox.jalrakshak.core.LocalLang
 import com.blackbox.jalrakshak.core.LocalStrings
-import com.blackbox.jalrakshak.ui.theme.isDark
-import com.blackbox.jalrakshak.ui.theme.riskColor
-import com.blackbox.jalrakshak.ui.theme.riskTint
+import com.blackbox.jalrakshak.ui.theme.CardBg
+import com.blackbox.jalrakshak.ui.theme.scriptAware
+import com.blackbox.jalrakshak.ui.theme.Ink3
+import com.blackbox.jalrakshak.ui.theme.Line
+import com.blackbox.jalrakshak.ui.theme.OfflineBg
+import com.blackbox.jalrakshak.ui.theme.OfflineInk
+import com.blackbox.jalrakshak.ui.theme.OfflineLine
 
 /**
- * Common.kt — chhote reusable UI tukde.
- * KYUN alag file: teen screens mein wahi card/banner/row chahiye. Ek jagah rakhne se
- * design consistent rehta hai (dashboard ke panels jaisa flat look).
+ * Common.kt — mockup ke reusable tukde.
+ * app_mockup.html ke class naam comments mein diye hain taaki design se milaana aasan rahe.
  */
 
+/** Mockup ka `.card` — off-white surface, 1px border, 16dp radius. Koi shadow nahi. */
+@Composable
+fun AppCard(
+    modifier: Modifier = Modifier,
+    padding: Dp = 20.dp,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(CardBg, RoundedCornerShape(16.dp))
+            .border(1.dp, Line, RoundedCornerShape(16.dp))
+            .padding(padding),
+        content = content,
+    )
+}
+
+/** Mockup ka `.sect` — 13px/700 section heading. */
+@Composable
+fun SectionTitle(text: String, modifier: Modifier = Modifier) {
+    AppText(
+        text,
+        style = MaterialTheme.typography.titleSmall,
+        modifier = modifier.padding(start = 2.dp, bottom = 10.dp),
+    )
+}
+
 /**
- * levelIcon() — risk level ka icon.
- * Material ke OUTLINED icons use kar rahe hain — ye Tabler ki line-style ke sabse kareeb
- * hain, jo dashboard mein use hui hai. Filled icons bhaari aur alag dikhte.
+ * OfflineBanner — mockup ka `.off`: amber patti sabse upar.
+ *
+ * KYUN ITNA ZAROORI: offline mein app PURANA risk dikhati hai. Bina is patti ke citizen
+ * samjhega ye abhi ka haal hai — aur "safe" dekh ke bahar nikal jaayega, jabki 6 ghante
+ * mein paani chadh chuka ho. Purana data dikhana theek hai; usse NAYA batana khatarnaak hai.
  */
+@Composable
+fun OfflineBanner(cachedAt: Long?) {
+    val s = LocalStrings.current
+    Column(Modifier.fillMaxWidth().background(OfflineBg)) {
+        Row(
+            Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 9.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(7.dp),
+        ) {
+            Icon(Icons.Outlined.CloudOff, null, tint = OfflineInk, modifier = Modifier.size(15.dp))
+            AppText(
+                buildString {
+                    append(s.offlineBanner)
+                    if (cachedAt != null) append(" · ${s.lastUpdated}: ${timeAgo(cachedAt)}")
+                },
+                style = MaterialTheme.typography.labelMedium,
+                color = OfflineInk,
+            )
+        }
+        // Mockup mein `.off` pe SIRF border-bottom hai. Poore box ka border (jo pehle
+        // tha) patti ko ek "card" jaisa dikha raha tha — wo full-bleed patti honi chahiye.
+        Box(Modifier.fillMaxWidth().height(1.dp).background(OfflineLine))
+    }
+}
+
+/** levelIcon() — risk level ka icon. Material outlined = Tabler line style ke sabse kareeb. */
 fun levelIcon(level: String): ImageVector = when (level) {
     "red" -> Icons.Outlined.WarningAmber
     "yellow" -> Icons.Outlined.ErrorOutline
     else -> Icons.Outlined.CheckCircle
 }
 
-/** levelLabel() — level ka naam, chuni hui bhasha mein. */
+/** levelLabel() — level ka naam chuni hui bhasha mein. */
 @Composable
 fun levelLabel(level: String): String {
     val s = LocalStrings.current
@@ -58,130 +126,34 @@ fun levelLabel(level: String): String {
     }
 }
 
-/**
- * Panel — dashboard ke `.panel` jaisa flat card.
- * Koi shadow/elevation nahi — sirf border. Yehi mockup ka look hai (flat surfaces).
- */
-@Composable
-fun Panel(
-    modifier: Modifier = Modifier,
-    content: @Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
-            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
-            .padding(14.dp),
-        content = content,
-    )
-}
-
-/**
- * OfflineBanner — "ऑफ़लाइन — पिछली जानकारी दिखाई जा रही है" + kitna purana.
- *
- * INPUT: cachedAt (millis) — data kab save hua tha
- *
- * KYUN ye banner ITNA ZAROORI HAI: offline mein app purana risk dikhati hai. Bina banner
- * ke citizen samjhega ye ABHI ka haal hai — aur "green" dekh ke bahar nikal jaayega,
- * jabki 6 ghante mein paani chadh chuka ho. Purana data dikhana theek hai; usse NAYA
- * batana khatarnak hai. Isliye banner mein umar bhi likhi hai.
- */
-@Composable
-fun OfflineBanner(cachedAt: Long?) {
-    val s = LocalStrings.current
-    val amber = MaterialTheme.colorScheme.let { riskColor("yellow") }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(riskTint("yellow", isDark()), RoundedCornerShape(10.dp))
-            .border(1.dp, amber.copy(alpha = 0.4f), RoundedCornerShape(10.dp))
-            .padding(horizontal = 12.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        Icon(Icons.Outlined.CloudOff, null, tint = amber, modifier = Modifier.size(18.dp))
-        Column {
-            Text(
-                s.offlineBanner,
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            if (cachedAt != null) {
-                Text(
-                    "${s.lastUpdated}: ${timeAgo(cachedAt)}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-    }
-}
-
-/**
- * InfoRow — "label ......... value" ki ek line (dashboard ke drawer `.drow` jaisa).
- */
-@Composable
-fun InfoRow(label: String, value: String, valueColor: Color? = null) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 7.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(
-            value,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = valueColor ?: MaterialTheme.colorScheme.onSurface,
-        )
-    }
-}
-
-/** EmptyState — "abhi kuch nahi hai" (alerts feed ke liye). */
+/** Khaali state (alerts feed ke liye). */
 @Composable
 fun EmptyState(icon: ImageVector, title: String, subtitle: String) {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(32.dp),
+        Modifier.fillMaxWidth().padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Icon(
-            icon, null,
-            tint = MaterialTheme.colorScheme.outline,
-            modifier = Modifier.size(40.dp),
-        )
-        Text(title, style = MaterialTheme.typography.titleMedium)
-        Text(
+        Icon(icon, null, tint = Ink3, modifier = Modifier.size(40.dp))
+        AppText(title, style = MaterialTheme.typography.titleMedium)
+        AppText(
             subtitle,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            textAlign = TextAlign.Center,
         )
     }
 }
 
 /**
- * timeAgo() — millis ko "5 मिनट पहले" jaisa banata hai.
- *
- * INPUT : timestamp (millis) | OUTPUT: readable string
- * KYUN relative: "14:32" se citizen ko kuch samajh nahi aata. "2 ghante pehle" se
- * turant pata chalta hai ki jaankari kitni purani hai — offline banner ka poora point yehi hai.
- *
- * NOTE: ye chhota sa formatting hai, isliye Strings.kt mein nahi daala; dono bhasha ke
- * shabd yahin inline hain (Compose se bhasha padh ke).
+ * timeAgo() — millis -> "5 मिनट पहले" / "5 min ago".
+ * KYUN relative: "14:32" se citizen ko kuch samajh nahi aata. "2 ghante pehle" se turant
+ * pata chalta hai ki jaankari kitni purani hai — offline banner ka poora point yehi hai.
  */
 @Composable
 fun timeAgo(millis: Long): String {
-    val hi = com.blackbox.jalrakshak.core.LocalLang.current == com.blackbox.jalrakshak.core.Lang.HI
+    val hi = LocalLang.current == Lang.HI
     val mins = ((System.currentTimeMillis() - millis) / 60000).coerceAtLeast(0)
-
     return when {
         mins < 1 -> if (hi) "अभी" else "just now"
         mins < 60 -> if (hi) "$mins मिनट पहले" else "$mins min ago"
@@ -190,29 +162,45 @@ fun timeAgo(millis: Long): String {
     }
 }
 
-/** Chhota rangeen badge (risk level ke liye) — dashboard ke `.dbadge` jaisa. */
+/** Chhota circular badge — mockup ka `.item .dot` (numbered steps ke liye). */
 @Composable
-fun LevelBadge(level: String) {
-    val color = riskColor(level)
-    Row(
-        modifier = Modifier
-            .background(riskTint(level, isDark()), RoundedCornerShape(6.dp))
-            .padding(horizontal = 10.dp, vertical = 5.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+fun NumberDot(text: String, bg: Color, fg: Color) {
+    Box(
+        Modifier.size(22.dp).background(bg, CircleShape),
+        contentAlignment = Alignment.Center,
     ) {
-        Icon(levelIcon(level), null, tint = color, modifier = Modifier.size(16.dp))
-        Text(
-            levelLabel(level).uppercase(),
-            style = MaterialTheme.typography.labelMedium,
-            color = color,
-            fontWeight = FontWeight.Bold,
-        )
+        AppText(text, style = MaterialTheme.typography.labelSmall, color = fg)
     }
 }
 
-/** Box jo poori jagah leke beech mein content rakhta hai (loading/error ke liye). */
+/**
+ * AppText — poore app ka Text. Andar se `scriptAware()` lagata hai.
+ *
+ * KYUN WRAPPER (har call site pe scriptAware() likhne ke bajaye): ek jagah se poore
+ * app ka script handling control hota hai. Koi naya screen banaye aur AppText use kare,
+ * to Hindi apne aap sahi font mein aayega — bhoolne ki gunjaish nahi.
+ *
+ * Signature jaan-bujh ke chhota hai — sirf wahi params jo hum actually use karte hain.
+ */
 @Composable
-fun CenterBox(content: @Composable () -> Unit) {
-    Box(Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) { content() }
+fun AppText(
+    text: String,
+    modifier: Modifier = Modifier,
+    style: TextStyle = LocalTextStyle.current,
+    color: Color = Color.Unspecified,
+    fontWeight: FontWeight? = null,
+    textAlign: TextAlign? = null,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
+) {
+    Text(
+        text = scriptAware(text),
+        modifier = modifier,
+        color = color,
+        fontWeight = fontWeight,
+        textAlign = textAlign,
+        maxLines = maxLines,
+        overflow = overflow,
+        style = style,
+    )
 }

@@ -1,104 +1,61 @@
 package com.blackbox.jalrakshak.ui.theme
 
 import android.app.Activity
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Typography
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 
 /**
- * JalRakshakTheme — poore app ka rang aur typography.
+ * JalRakshakTheme — app_mockup.html ka light theme.
  *
- * KYUN Material You (dynamic color) NAHI:
- *  Android 12+ wallpaper se app ke rang chura leta hai. Ye normal app ke liye achha hai,
- *  par yahan KHATARNAK: agar user ka wallpaper laal hai to poori app laal ho jaayegi
- *  aur "safe/green" bhi laal dikhega. Risk ka rang kabhi wallpaper pe depend nahi karna
- *  chahiye. Isliye rang fix hain — wahi jo officer dashboard pe hain.
+ * KYUN SIRF LIGHT (dark theme hata diya):
+ *  Approved design light hai. Aur ye app dhoop mein, bahar, jaldi mein padhi jaati hai —
+ *  wahan light + high contrast hi padhne layak hota hai. Dark theme rakhne ka matlab
+ *  hota ek aur design maintain karna jo kabhi approve hi nahi hua.
+ *  Phone dark mode mein ho tab bhi app light rehti hai — ye jaan-bujh ke hai.
  *
- * Dark/light PHONE ki setting follow karta hai (dashboard ka toggle yahan nahi hai —
- * app mein toggle bhasha ke liye hai, jo zyada zaroori hai).
+ * KYUN Material You (dynamic color) NAHI: wallpaper se rang chura ke risk ka laal/hara
+ * badal dena khatarnaak hai. Rang fix hain.
  */
 
-private val LightColors = lightColorScheme(
-    primary = Accent,
+private val AppColors = lightColorScheme(
+    primary = Blue,
     onPrimary = Color.White,
-    secondary = Accent2,
-    background = LightBg,
-    onBackground = LightInk,
-    surface = LightPanel,
-    onSurface = LightInk,
-    surfaceVariant = LightPanel2,
-    onSurfaceVariant = LightInk2,
-    outline = LightLine,
-    error = RiskRed,
-)
-
-private val DarkColors = darkColorScheme(
-    primary = Accent2,
-    onPrimary = Color.White,
-    secondary = Accent,
-    background = DarkBg,
-    onBackground = DarkInk,
-    surface = DarkPanel,
-    onSurface = DarkInk,
-    surfaceVariant = DarkPanel2,
-    onSurfaceVariant = DarkInk2,
-    outline = DarkLine,
-    error = RiskRed,
-)
-
-/**
- * Typography — thoda BADA default size.
- * KYUN: app gaon ke logon ke liye hai, aksar dhoop mein aur jaldi mein padhi jaayegi.
- * Material ka default 14sp body yahan chhota padta hai. 15-16sp rakha hai.
- */
-private val AppTypography = Typography(
-    headlineMedium = TextStyle(fontSize = 26.sp, fontWeight = FontWeight.SemiBold, lineHeight = 32.sp),
-    titleLarge = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.SemiBold, lineHeight = 26.sp),
-    titleMedium = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold, lineHeight = 22.sp),
-    bodyLarge = TextStyle(fontSize = 16.sp, lineHeight = 24.sp),
-    bodyMedium = TextStyle(fontSize = 15.sp, lineHeight = 22.sp),
-    bodySmall = TextStyle(fontSize = 13.sp, lineHeight = 18.sp),
-    labelLarge = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.SemiBold),
-    labelMedium = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
+    secondary = Ink,
+    background = Bg,
+    onBackground = Ink,
+    surface = CardBg,
+    onSurface = Ink,
+    surfaceVariant = Neutral,
+    onSurfaceVariant = Ink2,
+    outline = Line,
+    outlineVariant = Line,
+    error = Red,
+    onError = Color.White,
 )
 
 @Composable
-fun JalRakshakTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit,
-) {
-    val colors = if (darkTheme) DarkColors else LightColors
+fun JalRakshakTheme(content: @Composable () -> Unit) {
     val view = LocalView.current
 
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            // Status bar app ke background ke saath ghul jaaye — do alag rang bure lagte hain.
-            window.statusBarColor = colors.background.toArgb()
-            // Dark theme mein safed icons, light mein kaale — warna icons dikhte hi nahi.
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            // Status bar screen ke background mein ghul jaaye — do alag rang bure lagte hain.
+            window.statusBarColor = Bg.toArgb()
+            window.navigationBarColor = CardBg.toArgb()
+            // Light background hai to icons DARK chahiye, warna dikhte hi nahi.
+            WindowCompat.getInsetsController(window, view).apply {
+                isAppearanceLightStatusBars = true
+                isAppearanceLightNavigationBars = true
+            }
         }
     }
 
-    MaterialTheme(
-        colorScheme = colors,
-        typography = AppTypography,
-        content = content,
-    )
+    MaterialTheme(colorScheme = AppColors, typography = AppTypography, content = content)
 }
-
-/** Kya abhi dark theme hai — riskTint() ko batane ke liye. */
-@Composable
-fun isDark(): Boolean = isSystemInDarkTheme()

@@ -33,10 +33,11 @@ const ICONS = { sos: IconUrgent, alert: IconBell, sys: IconCloudRain, river: Ico
  * INPUT : relief, alerts, snapshot (abhi ka risk map), mode
  * OUTPUT: feed items ka array (naya sabse upar), max 25
  *
- * KYUN max 25: panel scrollable hai par 500 items render karne ka koi fayda nahi —
+ * KYUN default max 25: panel scrollable hai par 500 items render karne ka koi fayda nahi —
  * officer utna neeche kabhi nahi jaata, aur DOM bhaari ho jaata hai.
+ * "View all" modal Infinity bhejta hai — wahan poori list dikhani hi hoti hai.
  */
-function buildFeed(relief, alerts, snapshot, mode) {
+export function buildFeed(relief, alerts, snapshot, mode, limit = 25) {
   const items = []
 
   // --- 1. SOS (asli, timestamp ke saath) ---------------------------------------
@@ -118,13 +119,14 @@ function buildFeed(relief, alerts, snapshot, mode) {
     })
   }
 
-  return [...sys, ...items].slice(0, 25)
+  const all = [...sys, ...items]
+  return limit === Infinity ? all : all.slice(0, limit)
 }
 
-export default function ActivityFeed({ relief, alerts, snapshot, mode, loading }) {
+export default function ActivityFeed({ relief, alerts, snapshot, mode, loading, limit }) {
   const feed = useMemo(
-    () => buildFeed(relief, alerts, snapshot, mode),
-    [relief, alerts, snapshot, mode],
+    () => buildFeed(relief, alerts, snapshot, mode, limit),
+    [relief, alerts, snapshot, mode, limit],
   )
 
   if (loading) {
@@ -147,27 +149,36 @@ export default function ActivityFeed({ relief, alerts, snapshot, mode, loading }
 
   return (
     <>
-      {feed.map((f) => {
-        const Icon = ICONS[f.type] || IconActivity
-        // 'river' bhi visually 'sys' hi hai (amber) — sirf icon alag.
-        const cls = f.type === 'river' ? 'sys' : f.type
-
-        return (
-          <div key={f.key} className={`feed-item ${cls}`}>
-            <div className="fic">
-              <Icon className="ti" />
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div className="ft">{f.title}</div>
-              <div className="fm">{f.msg}</div>
-              {/* Replay ke derived items pe 2022 ki DATE likhte hain, "2 min ago" nahi.
-                  Warna officer ko lagega ki nadi abhi, is waqt danger paar kar rahi hai —
-                  jabki wo 2022 ka replay hai. Ye galatfehmi flood dashboard mein bhaari padegi. */}
-              <div className="ftime">{f.stamp ? `Replay · ${f.stamp}` : timeAgo(f.at)}</div>
-            </div>
-          </div>
-        )
-      })}
+      {feed.map((f) => (
+        <FeedItem key={f.key} f={f} />
+      ))}
     </>
+  )
+}
+
+/**
+ * FeedItem — feed ka ek item.
+ * KYUN alag component: panel aur "View all" modal dono yahi markup use karte hain.
+ * Do jagah copy karte to ek jagah style badalne pe doosri peeche reh jaati.
+ */
+export function FeedItem({ f }) {
+  const Icon = ICONS[f.type] || IconActivity
+  // 'river' bhi visually 'sys' hi hai (amber) — sirf icon alag.
+  const cls = f.type === 'river' ? 'sys' : f.type
+
+  return (
+    <div className={`feed-item ${cls}`}>
+      <div className="fic">
+        <Icon className="ti" />
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="ft">{f.title}</div>
+        <div className="fm">{f.msg}</div>
+        {/* Replay ke derived items pe 2022 ki DATE likhte hain, "2 min ago" nahi.
+            Warna officer ko lagega ki nadi abhi, is waqt danger paar kar rahi hai —
+            jabki wo 2022 ka replay hai. Ye galatfehmi flood dashboard mein bhaari padegi. */}
+        <div className="ftime">{f.stamp ? `Replay · ${f.stamp}` : timeAgo(f.at)}</div>
+      </div>
+    </div>
   )
 }

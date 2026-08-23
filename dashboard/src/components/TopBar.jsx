@@ -4,12 +4,16 @@
  *
  * KYUN mode toggle yahan sabse upar: ye poore dashboard ka sabse bada switch hai —
  * "abhi ka asli data" vs "2022 ka replay". Demo mein judge ke saamne yahi sabse pehle dabta hai.
+ *
+ * KYUN "Send alert" bhi yahan: dekhna aur karna do alag cheezein hain. Poora dashboard
+ * dekhne ke liye hai; alert bhejna ekmatra ASLI kaam hai jo officer yahan se karta hai.
+ * Wo kaam kisi drawer ke andar chhupa nahi hona chahiye.
  */
 
-import { IconMoon, IconRipple, IconSun } from '@tabler/icons-react'
+import { IconBell, IconMoon, IconRipple, IconSun } from '@tabler/icons-react'
 import { useClock } from '../hooks/useDashboardData'
 
-export default function TopBar({ mode, onModeChange, isDark, onThemeToggle, liveStale }) {
+export default function TopBar({ mode, onModeChange, isDark, onThemeToggle, liveStale, onSendAlert, atRiskCount }) {
   const clock = useClock()
 
   return (
@@ -46,7 +50,27 @@ export default function TopBar({ mode, onModeChange, isDark, onThemeToggle, live
         <button className={mode === 'live' ? 'active' : ''} onClick={() => onModeChange('live')}>
           Live
         </button>
+        {/* B1 — trained SAR model. Baaki do mode rule-based RiskEngine se chalte hain,
+            ye ek alag cheez hai; isliye alag tab. */}
+        <button
+          className={mode === 'satellite' ? 'active' : ''}
+          onClick={() => onModeChange('satellite')}
+        >
+          Satellite
+        </button>
       </div>
+
+      {/* ---- PRIMARY ACTION ----
+          Dashboard ka sabse zaroori kaam. Pehle ye sirf drawer ke andar chhupa tha
+          (map ka dot dhoondho -> drawer -> neeche scroll), to naya banda kabhi dhoondh
+          hi nahi paata tha. Ab accent colour mein, hamesha upar.
+          Badge mein "abhi kitne gaon khatre mein hain" — button khud bata deta hai ki
+          use dabane ki zaroorat hai ya nahi. */}
+      <button className="btn-primary" onClick={onSendAlert} title="Send an alert to a village">
+        <IconBell className="ti" />
+        Send alert
+        {atRiskCount > 0 && <span className="cnt">{atRiskCount}</span>}
+      </button>
 
       <button
         className="iconbtn"

@@ -56,6 +56,10 @@ data class RiskDto(
     @SerialName("water_eta_en") val waterEtaEn: String = "",
     @SerialName("advice_hi") val adviceHi: String = "",
     @SerialName("advice_en") val adviceEn: String = "",
+    // Kitne ghante mein paani danger mark tak pahunch sakta hai.
+    // null = ya to paani badh nahi raha, ya river data hi nahi (RiskEngine dono case
+    // mein null bhejta hai). Home screen ka "To rise" metric isi se banta hai.
+    @SerialName("hours_to_danger") val hoursToDanger: Int? = null,
     val factors: FactorsDto = FactorsDto(),
 )
 

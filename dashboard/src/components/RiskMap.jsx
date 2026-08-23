@@ -16,7 +16,7 @@
  */
 
 import { useEffect, useMemo } from 'react'
-import { MapContainer, Marker, TileLayer, ZoomControl, useMap } from 'react-leaflet'
+import { GeoJSON, MapContainer, Marker, TileLayer, ZoomControl, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import { LEVEL_COLORS } from '../config'
 import { dotSize, levelColor } from '../utils/risk'
@@ -67,7 +67,34 @@ function ResizeFix({ trigger }) {
   return null
 }
 
-export default function RiskMap({ villages, subtitle, selectedId, onSelect, isDark, drawerOpen }) {
+/**
+ * FitBounds — SAR scene aane pe map us chip pe zoom kar deta hai.
+ *
+ * KYUN CHAHIYE: map Assam ke poore view pe (zoom 7) khula hota hai, par ek chip sirf
+ * ~5x5 km ka hai — us zoom pe wo ek bindi se bhi chhota dikhta. Bina auto-zoom ke
+ * officer ko khud dhoondhna padta ki polygons kahan bane.
+ *
+ * bounds null hone pe kuch nahi karta (normal risk modes mein map jaisa hai waisa rahe).
+ */
+function FitBounds({ bounds }) {
+  const map = useMap()
+  useEffect(() => {
+    if (!bounds) return
+    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 13 })
+  }, [map, bounds])
+  return null
+}
+
+export default function RiskMap({
+  villages,
+  subtitle,
+  selectedId,
+  onSelect,
+  isDark,
+  drawerOpen,
+  waterGeoJson = null,   // B1 detection ke polygons (sirf Satellite mode mein)
+  fitBounds = null,      // SAR scene ke bounds
+}) {
   // Markers ko memo karte hain — warna har render pe 30 divIcon dobara bante hain
   // (aur replay auto-play mein render har 950ms hota hai).
   const markers = useMemo(
@@ -98,6 +125,24 @@ export default function RiskMap({ villages, subtitle, selectedId, onSelect, isDa
             React-leaflet url prop badalne pe apne aap reload nahi karta, isliye key trick. */}
         <TileLayer key={isDark ? 'dark' : 'light'} url={isDark ? TILES.dark : TILES.light} maxZoom={12} />
 
+        {/* --- B1: detected water polygons ---
+            key={} isliye ki naya scene aane pe Leaflet purani layer reuse na kare —
+            warna pichhle scene ke polygons chipke reh jaate hain. */}
+        {waterGeoJson && (
+          <GeoJSON
+            key={JSON.stringify(fitBounds)}
+            data={waterGeoJson}
+            style={{
+              // Accent blue — dashboard ke risk colours (red/amber/green) se alag,
+              // taaki "detected water" aur "village risk level" kabhi confuse na hon.
+              color: '#4b82be',
+              weight: 1,
+              fillColor: '#3b6ea5',
+              fillOpacity: 0.45,
+            }}
+          />
+        )}
+
         {markers.map((m) => (
           <Marker
             key={m.id}
@@ -108,11 +153,15 @@ export default function RiskMap({ villages, subtitle, selectedId, onSelect, isDa
         ))}
 
         <ResizeFix trigger={drawerOpen} />
+        <FitBounds bounds={fitBounds} />
       </MapContainer>
 
       <div className="map-chip map-title">
         <b>Assam flood grid</b>
         <span>{subtitle}</span>
+        {/* Pehli baar dekhne wale ko dot clickable lagte hi nahi. Ek line likh dena
+            sabse sasta fix hai — mockup ka look waisa ka waisa rehta hai. */}
+        <span className="hint">Click a village for detail</span>
       </div>
 
       <div className="map-chip map-legend">

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ReliefRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * ReliefController — citizen ka SOS (two-way communication).
@@ -97,6 +98,41 @@ class ReliefController extends Controller
             ],
             'count' => $requests->count(),
             'requests' => $requests->map(fn ($r) => $this->format($r))->values(),
+        ]);
+    }
+
+    /**
+     * PATCH /api/relief/{id} — officer request ka status badalta hai.
+     *
+     * BODY: status = new | inprogress | done
+     * OUTPUT: 200 + updated request, 404 agar id nahi mili, 422 galat status pe
+     *
+     * KYUN YE ENDPOINT CHAHIYE: dashboard pe relief list dikhti to thi, par officer
+     * usme kuch KAR nahi sakta tha — ek SOS aane ke baad wo hamesha "new" hi dikhti
+     * rehti. Do boat aur bees request ho to officer ko yaad rakhna padta ki kis pe
+     * team bhej di. Ab wo list mein hi mark kar sakta hai.
+     *
+     * KYUN koi auth nahi: baaki officer endpoints (POST /alert, GET /relief) bhi
+     * abhi khule hain — scope LOCKED (BUILD_PLAN section 2). Deployment mein poora
+     * officer group login ke peeche jaayega, ye bhi.
+     */
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $data = $request->validate([
+            'status' => ['required', 'string', Rule::in(ReliefRequest::STATUSES)],
+        ]);
+
+        $relief = ReliefRequest::with('village:id,name,district')->find($id);
+
+        if ($relief === null) {
+            return response()->json(['message' => 'Relief request nahi mili.'], 404);
+        }
+
+        $relief->update(['status' => $data['status']]);
+
+        return response()->json([
+            'message' => 'Status update ho gaya.',
+            'relief' => $this->format($relief),
         ]);
     }
 

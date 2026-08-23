@@ -23,6 +23,20 @@ import { chartTheme } from '../hooks/useTheme'
 import { shortDay } from '../utils/format'
 
 export default function TrendChart({ snapshots, days, loading, isDark, mode, currentDay }) {
+  if (mode === 'satellite') {
+    // KYUN empty state: ye chart village-level RAINFALL trend hai (rule-based data se).
+    // SAR detection ek satellite image ka snapshot hai — dono ka koi rishta nahi.
+    // Purana replay trend yahan chhoda rehne dena galat impression deta ki ye
+    // detection se juda hai.
+    return (
+      <Empty Icon={IconChartLine}>
+        Rainfall trend ka SAR detection se koi rishta nahi.
+        <br />
+        Ye chart Replay 2022 mode mein dekhein.
+      </Empty>
+    )
+  }
+
   if (mode === 'live') {
     return (
       <Empty Icon={IconChartLine}>
