@@ -145,7 +145,7 @@ export default function ActivityFeed({ relief, alerts, snapshot, mode, loading, 
     )
   }
 
-  if (!feed.length) return <Empty Icon={IconActivity}>Abhi koi activity nahi</Empty>
+  if (!feed.length) return <Empty Icon={IconActivity}>No activity yet.</Empty>
 
   return (
     <>

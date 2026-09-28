@@ -17,10 +17,16 @@ import { Bar } from 'react-chartjs-2'
 import './charts'
 import { chartTheme } from '../hooks/useTheme'
 import { levelColor } from '../utils/risk'
+import { IconChartBar } from '@tabler/icons-react'
+import { Empty } from './Panel'
 
 const TOP_N = 8
 
-export default function RainfallBar({ villages, loading, isDark }) {
+export default function RainfallBar({ villages, loading, isDark, unavailable }) {
+  // RiskDonut jaisa hi: data nahi to khaali bars (0 mm) nahi, saaf wajah.
+  if (unavailable) {
+    return <Empty Icon={IconChartBar}>No rainfall data: the live server is unreachable.</Empty>
+  }
   if (loading) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 9, paddingTop: 4 }}>

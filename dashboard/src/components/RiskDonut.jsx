@@ -10,8 +10,15 @@
 import { Doughnut } from 'react-chartjs-2'
 import './charts'
 import { LEVEL_COLORS } from '../config'
+import { IconChartDonut } from '@tabler/icons-react'
+import { Empty } from './Panel'
 
-export default function RiskDonut({ summary, loading }) {
+export default function RiskDonut({ summary, loading, unavailable }) {
+  // Data aaya hi nahi (live fail). "0 villages" ka donut jhootha all-clear hota —
+  // saaf likho ki data nahi hai. Skeleton bhi nahi: wo "aa raha hai" bolta hai, jo sach nahi.
+  if (unavailable) {
+    return <Empty Icon={IconChartDonut}>No risk data: the live server is unreachable.</Empty>
+  }
   if (loading) {
     return (
       <>

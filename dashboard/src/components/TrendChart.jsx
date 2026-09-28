@@ -30,9 +30,9 @@ export default function TrendChart({ snapshots, days, loading, isDark, mode, cur
     // detection se juda hai.
     return (
       <Empty Icon={IconChartLine}>
-        Rainfall trend ka SAR detection se koi rishta nahi.
+        The rainfall trend is unrelated to SAR detection.
         <br />
-        Ye chart Replay 2022 mode mein dekhein.
+        See this chart in Replay 2022 mode.
       </Empty>
     )
   }
@@ -40,9 +40,9 @@ export default function TrendChart({ snapshots, days, loading, isDark, mode, cur
   if (mode === 'live') {
     return (
       <Empty Icon={IconChartLine}>
-        Live mode sirf abhi ka data dikhata hai.
+        Live mode shows only today's data.
         <br />
-        12-din ka trend Replay 2022 mein dekhein.
+        The 12-day trend is in Replay 2022.
       </Empty>
     )
   }

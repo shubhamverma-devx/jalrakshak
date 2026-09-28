@@ -45,7 +45,7 @@ function Kpi({ tone, label, value, delta, Icon, loading }) {
   )
 }
 
-export default function KpiStrip({ snapshot, relief, alerts, sessionAlerts, loading, sar, opsDown }) {
+export default function KpiStrip({ snapshot, relief, alerts, sessionAlerts, loading, sar, opsDown, riskDown }) {
   /**
    * Satellite mode: KPI strip poori tarah SAR ke numbers dikhata hai.
    *
@@ -110,6 +110,9 @@ export default function KpiStrip({ snapshot, relief, alerts, sessionAlerts, load
   }
 
   const s = snapshot?.summary
+  // riskDown: snapshot aaya hi nahi (live fail). "0 danger zones" dikhana jhootha all-clear
+  // hota, aur skeleton hamesha ghoomta — dono galat. "—" + wajah.
+  const na = riskDown && !s
   const reliefPending = relief ? relief.counts.new + relief.counts.inprogress : 0
 
   return (
@@ -118,25 +121,25 @@ export default function KpiStrip({ snapshot, relief, alerts, sessionAlerts, load
         tone="red"
         label="Danger zones"
         Icon={IconAlertTriangle}
-        loading={loading}
-        value={s?.by_level.red ?? 0}
-        delta="villages above danger mark"
+        loading={loading && !na}
+        value={na ? '—' : s?.by_level.red ?? 0}
+        delta={na ? 'live data unavailable' : 'villages above danger mark'}
       />
       <Kpi
         tone="amber"
         label="Warning zones"
         Icon={IconAlertCircle}
-        loading={loading}
-        value={s?.by_level.yellow ?? 0}
-        delta="river or rainfall warning"
+        loading={loading && !na}
+        value={na ? '—' : s?.by_level.yellow ?? 0}
+        delta={na ? 'live data unavailable' : 'river or rainfall warning'}
       />
       <Kpi
         tone="accent"
         label="People at risk"
         Icon={IconUsers}
-        loading={loading}
-        value={num(s?.affected_population)}
-        delta="across danger + warning zones"
+        loading={loading && !na}
+        value={na ? '—' : num(s?.affected_population)}
+        delta={na ? 'live data unavailable' : 'across danger + warning zones'}
       />
       {/* Relief aur alerts ASLI hain — replay mode mein bhi ye 2022 ke nahi, aaj ke hain.
           Isliye inka loading state risk snapshot se alag hai. */}

@@ -269,6 +269,7 @@ export default function App() {
         alerts={ops.alerts}
         sessionAlerts={sessionAlerts}
         opsDown={!!ops.error}
+        riskDown={!!error && !snapshot}
         loading={loading || !snapshot}
         // Satellite mode mein KPI strip SAR ke numbers dikhata hai.
         // KYUN: us tab pe "Danger zones 0" (live risk se) irrelevant aur confusing hai —
@@ -301,7 +302,11 @@ export default function App() {
                 Icon={IconChartDonut}
                 style={{ flex: '0 0 auto' }}
               >
-                <RiskDonut summary={snapshot?.summary} loading={loading || !snapshot} />
+                <RiskDonut
+                  summary={snapshot?.summary}
+                  loading={loading || !snapshot}
+                  unavailable={!!error && !snapshot}
+                />
               </Panel>
 
               <Panel
@@ -313,6 +318,7 @@ export default function App() {
                 <RainfallBar
                   villages={snapshot?.villages}
                   loading={loading || !snapshot}
+                  unavailable={!!error && !snapshot}
                   isDark={isDark}
                 />
               </Panel>
