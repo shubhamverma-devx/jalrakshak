@@ -8,7 +8,7 @@
  *
  * ============ DATA KAHAN SE (deploy hardening) ============
  * Scenes aur nateeje BUILD ke andar baked JSON se aate hain (`public/fallback/sar/`), API
- * se NAHI. KYUN: model PyTorch ka hai aur droplet (1GB RAM) par PyTorch load hi nahi ho
+ * se NAHI. KYUN: model PyTorch ka hai aur server (Railway free tier, 0.5 GB RAM) par PyTorch load hi nahi ho
  * sakta. Isliye `ml/predict.py` laptop par chaaron demo scenes pe chalta hai
  * (`php artisan dashboard:export-fallback`) aur uska ASLI output yahan padha jaata hai.
  * Nateeja wahi hai jo live chalane par aata — detection deterministic hai (same chip +

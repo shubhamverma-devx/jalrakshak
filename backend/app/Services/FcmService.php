@@ -44,7 +44,20 @@ final class FcmService
      */
     private const BATCH = 500;
 
-    public function __construct(private readonly Messaging $messaging) {}
+    /**
+     * KYUN Messaging constructor mein inject NAHI karte (pehle karte the):
+     * Firebase client banate hi credential file padhta hai. File na ho (Railway pe naya
+     * setup, env var bhoole) to FcmService banta hi nahi — aur uske saath AlertController
+     * bhi nahi, yaani POST /api/alert 500 deta aur alert DB mein save hi nahi hota. Ye upar
+     * wale "KABHI exception nahi" niyam ko todta tha. Ab client pehli zaroorat pe, try ke
+     * ANDAR banta hai: credential nahi => alert save + `push.error` mein saaf wajah.
+     */
+    private ?Messaging $messaging = null;
+
+    private function messaging(): Messaging
+    {
+        return $this->messaging ??= app(Messaging::class);
+    }
 
     /**
      * sendForAlert() — ek alert ko us gaon ke saare phones tak pahuchao.
@@ -104,6 +117,9 @@ final class FcmService
             'village_name' => (string) ($village?->name ?? ''),
             'message_hi' => $alert->message_hi,
             'message_en' => $alert->message_en,
+            // sent_by bhi jaata hai: app push aate hi alert ko apne local DB mein save
+            // karti hai (Alerts tab turant bharne ke liye), aur uske liye ye field
+            // chahiye. Iske bina card pe "kisne bheja" khaali dikhta.
             'sent_by' => $alert->sent_by,
             'sent_at' => $alert->sent_at?->toIso8601String() ?? '',
         ];
@@ -119,7 +135,7 @@ final class FcmService
                     ->withAndroidConfig($androidConfig)
                     ->withData($data);
 
-                $report = $this->messaging->sendMulticast($message, $chunk);
+                $report = $this->messaging()->sendMulticast($message, $chunk);
 
                 $sent += $report->successes()->count();
                 $failed += $report->failures()->count();

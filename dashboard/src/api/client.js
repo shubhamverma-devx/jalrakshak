@@ -140,7 +140,7 @@ export const postAlert = (payload) => request('/alert', { method: 'POST', body: 
  * OUTPUT: { scenes: [{id,label,ground_truth_water_pct,available}], model: {...} }
  *
  * NOTE: dashboard ab ise NAHI bulata — Satellite tab `fallback/sar/*.json` se chalta hai
- * (droplet par PyTorch nahi chal sakta, 1GB RAM). Endpoint local dev ke liye zinda hai.
+ * (server free tier pe hai, PyTorch nahi chal sakta). Endpoint local dev ke liye zinda hai.
  */
 export const getSarScenes = (signal) => request('/sar/scenes', { signal })
 

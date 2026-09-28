@@ -2,7 +2,7 @@
  * config.js — poore dashboard ki EK jagah ki settings.
  *
  * KYUN EK FILE: BUILD_PLAN section 4 ke hisaab se Laravel API aur React alag deploy hote hain
- * (API droplet pe, dashboard Vercel pe). Agar API ka URL 10 components mein bikhra hota to
+ * (API Railway pe, dashboard Vercel pe). Agar API ka URL 10 components mein bikhra hota to
  * deploy ke waqt har jagah dhoondhna padta. Yahan ek jagah badlo, poora app badal jaata hai.
  */
 
@@ -34,7 +34,7 @@ export const LEVEL_COLORS = {
  * Polling intervals (ms).
  * KYUN itne lambe: backend ka risk scheduler waise bhi har 30 min chalta hai (BUILD_PLAN
  * section 6) aur live risk map 15 min cache hota hai. Usse tez poll karne ka koi fayda nahi —
- * bas droplet (1GB RAM) pe faltu load padega.
+ * bas server (Railway free tier, 0.5 GB) pe faltu load aur kharcha padega.
  * Relief/alerts tez poll hote hain kyunki wo insaan ke action se banti hain (SOS aa sakta hai
  * kisi bhi waqt) aur query sasti hai.
  */
@@ -45,7 +45,7 @@ export const POLL_MS = {
 
 /**
  * Ek API call ka max intezaar (ms). Iske baad dashboard bundled fallback pe chala jaata hai.
- * KYUN 8 sec: droplet pe normal response <300ms hai; 8 sec ka matlab server atka hua hai.
+ * KYUN 8 sec: normal response <500ms hai; 8 sec ka matlab server atka hua hai.
  * Judge ko isse zyada skeleton ghoorne nahi dena.
  */
 export const REQUEST_TIMEOUT_MS = 8000

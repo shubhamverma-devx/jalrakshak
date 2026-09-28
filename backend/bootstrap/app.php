@@ -13,6 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Railway ka edge proxy HTTPS khatam karke andar HTTP bhejta hai. Proxy pe bharosa
+        // na karein to Laravel khud ko http:// samajhta hai (galat URLs, galat client IP).
+        // Container ke aage sirf Railway ka proxy hai, isliye '*' safe hai.
+        $middleware->trustProxies(at: '*');
+
         // API stateless hai (BUILD_PLAN section 6) — koi session/CSRF nahi, isliye default
         // api middleware group hi kaafi hai. Sanctum jaan-bujh ke install nahi kiya:
         // auth future scope hai (section 2), aur droplet 1GB pe har extra package ka weight hai.

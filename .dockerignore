@@ -1,0 +1,22 @@
+# Railway image sirf backend/ + data/ + ml/outputs/*.json leta hai (backend/Dockerfile).
+# Baaki sab yahan se bahar — aur secrets kisi bhi haal mein image mein nahi.
+.git
+_secrets
+**/.env
+**/.env.*
+**/firebase-admin.json
+**/google-services.json
+**/node_modules
+app
+dashboard
+ml/models
+ml/data
+ml/.venv
+ml/samples
+backend/vendor
+backend/storage/logs/*
+backend/storage/framework/cache/data/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/storage/app/firebase/*
+backend/storage/app/sar/*

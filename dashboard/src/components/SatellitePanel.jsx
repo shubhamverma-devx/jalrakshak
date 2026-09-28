@@ -2,7 +2,7 @@
  * SatellitePanel — B1 (trained SAR model) ka control panel.
  *
  * DATA: public/fallback/sar/*.json  <-  ml/predict.py (laptop pe chala, build mein baked)
- *       Droplet (1GB) par PyTorch nahi chalta — isliye "pre-computed" line hamesha dikhti hai.
+ *       Demo server (Railway free, 0.5 GB) par PyTorch nahi chalta — isliye "pre-computed" line hamesha dikhti hai.
  *
  * ============ IS PANEL KA SABSE ZAROORI HISSA: PROVENANCE ============
  *  Dashboard ka baaki sab kuch RULE-BASED hai (RiskEngine — IMD thresholds pe if-else).
@@ -302,14 +302,14 @@ export default function SatellitePanel({
             </>
           )}
           {/* KYUN ye line: button dabane par model yahan LIVE nahi chalta. Result
-              ml/predict.py ka asli output hai jo laptop par chala — demo server 1GB ka hai
-              aur PyTorch load nahi kar sakta. Ye na likhte to "Show detection" ko live
+              ml/predict.py ka asli output hai jo laptop par chala — demo server free tier
+              (0.5 GB) pe hai aur PyTorch load nahi kar sakta. Ye na likhte to "Show detection" ko live
               inference samjha jaata. */}
           <br />
           <span style={{ color: 'var(--ink3)' }}>
             Results pre-computed with <span className="mono">ml/predict.py</span>
-            {precomputedAt ? ` on ${precomputedAt.slice(0, 10)}` : ''} — the demo server (1 GB RAM)
-            does not load PyTorch. Same chip + threshold always gives the same mask.
+            {precomputedAt ? ` on ${precomputedAt.slice(0, 10)}` : ''} — the demo server runs on a free tier
+            and does not load PyTorch. Same chip + threshold always gives the same mask.
           </span>
         </div>
       )}

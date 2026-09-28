@@ -7,9 +7,9 @@
  *  Laravel 12 mein app/Console/Kernel.php nahi hota — scheduling ab yahan hoti hai.
  *  (BUILD_PLAN "Kernel mein schedule karo" isi jagah ko keh raha hai, sirf naam badla hai.)
  *
- *  Server pe ek hi cron entry chahiye (deploy/cron.d/jalrakshak — flock ke saath, taaki
- *  schedule:run khud bhi kabhi dhed na lage):
- *      * * * * * www-data flock -n /tmp/jr-schedule.lock php /var/www/jalrakshak/backend/artisan schedule:run
+ *  Production (Railway) pe cron service nahi hai — `backend/docker/start.sh` isi container
+ *  mein ek background loop chalata hai jo har minute `schedule:run` bulata hai (sequential,
+ *  `timeout 25m` ke saath, to dher nahi lagta). Local pe: `php artisan schedule:work`.
  * =====================================================================================
  */
 
@@ -28,8 +28,8 @@ use Illuminate\Support\Facades\Schedule;
  * withoutOverlapping(): agar Open-Meteo slow ho aur ek run 30 min se zyada le le, to doosra
  * run uske upar nahi chalega — warna dono ek saath DB likhenge aur droplet ki RAM khatam.
  *
- * runInBackground() JAAN-BUJH KE NAHI: foreground mein chalne se cron ka `flock` + `timeout 25m`
- * (deploy/cron.d/jalrakshak) poore run ko dhakta hai. Background mein risk:compute un dono
+ * runInBackground() JAAN-BUJH KE NAHI: foreground mein chalne se loop ka `timeout 25m`
+ * (start.sh ka loop) poore run ko dhakta hai. Background mein risk:compute un dono
  * ke bahar nikal jaata. Schedule mein aur koi task nahi, to block hona koi nuksaan nahi.
  */
 Schedule::command('risk:compute --mode=live')
