@@ -1,5 +1,5 @@
 # =============================================================================
-#  JalRakshak API — Railway image (Laravel 12 + FrankenPHP)
+#  JalRakshak API — Railway image (Laravel 12 + FrankenPHP, PHP 8.4)
 #  Build context = REPO ROOT (railway.json isko yahin point karta hai), backend/ nahi.
 # =============================================================================
 #  KYUN repo root: seeders `../data/*.csv` padhte hain (CsvReader::dataPath) aur model
@@ -13,7 +13,10 @@
 #  endpoint bina python ke turant saaf 503 deta hai (UI use chhupa leti hai). Torch image
 #  ko ~2 GB aur RAM ko ~400 MB+ badhata — free tier ki 0.5 GB limit mein asambhav.
 # =============================================================================
-FROM dunglas/frankenphp:1-php8.3-bookworm
+# KYUN 8.4 (8.3 nahi): composer.lock laptop ke PHP 8.5 pe bana hai aur Symfony 8.1 packages
+# (cache, string, translation...) `php >=8.4.1` maangte hain. 8.3 pe composer install fail
+# hota tha. 8.4 lock ke saare packages ko satisfy karta hai.
+FROM dunglas/frankenphp:1-php8.4-bookworm
 
 # composer.lock ke hisaab se bas yahi extra chahiye; baaki (mbstring, openssl, sodium,
 # dom, fileinfo...) base image mein hain.
@@ -21,6 +24,8 @@ RUN install-php-extensions pdo_mysql opcache zip pcntl intl bcmath \
     && cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Build container mein root hi hai — composer ki root-warning band.
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
 # Production opcache: code container ke andar badalta hi nahi, to timestamps check
 # karna bekaar kaam hai.

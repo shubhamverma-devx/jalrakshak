@@ -9,7 +9,7 @@
 | file | kaam |
 |---|---|
 | `railway.json` (repo root) | Railway ko batata hai: `backend/Dockerfile` se build, `/api/health` healthcheck, crash pe restart |
-| `backend/Dockerfile` | PHP 8.3 + FrankenPHP; context = repo root (seeders ko `data/` chahiye) |
+| `backend/Dockerfile` | PHP 8.4 + FrankenPHP; context = repo root (seeders ko `data/` chahiye) |
 | `backend/docker/start.sh` | har deploy pe: migrate -> seed (idempotent) -> config/route cache -> scheduler loop -> server |
 | `.dockerignore` | secrets, weights, node_modules image se bahar |
 | `dashboard/vercel.json` | build, `dist`, SPA rewrite, cache headers |
