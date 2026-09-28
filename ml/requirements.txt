@@ -15,3 +15,8 @@ tqdm>=4.66
 # Notebook chalane ke liye
 jupyter>=1.0
 nbconvert>=7.0
+nbformat>=5.9            # scripts/build_*_notebook.py notebook generate karte hain
+
+# B2 — village flood forecast (+24h/+48h)
+# Alag se kuch nahi chahiye: torch, numpy, scikit-learn, matplotlib upar already hain.
+# Rainfall Open-Meteo se stdlib urllib se aati hai — koi extra client nahi.

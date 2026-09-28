@@ -2,6 +2,13 @@
 
 **JalRakshak** · SIH26071 (MoES/IMD) · Team Blackbox
 
+> **`ml/` mein do model hain.** Ye file **B1** (satellite se paani ka detection) ki hai.
+> **B2** — village-level flood **forecast** (+24h / +48h) — ke liye
+> **[`FORECAST_README.md`](FORECAST_README.md)** dekho.
+> Dono alag cheezein hain: B1 batata hai **abhi paani kahan hai**, B2 anumaan lagata hai
+> **aage kya ho sakta hai**. B2 abhi ek trivial baseline ke barabar hai — uski README
+> mein numbers saaf likhe hain.
+
 Sentinel-1 **SAR** (radar) satellite image se paani ka mask nikalne wala trained model,
 aur doobe hue area ka hisaab (sq km).
 

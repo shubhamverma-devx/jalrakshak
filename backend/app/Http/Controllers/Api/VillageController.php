@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Village;
+use App\Services\ForecastService;
 use App\Services\RiskMapService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -74,6 +76,47 @@ class VillageController extends Controller
      * poori screen ka data mil jaaye to 4 alag call ka round-trip bachta hai — aur wahi
      * ek response Room (SQLite) mein offline cache ho jaata hai.
      */
+    /**
+     * GET /api/village/{id}/forecast — B2 ka +24h / +48h forecast.
+     *
+     * OUTPUT: 200 + { forecast, model }, 404 gaon na mile to, 503 model na chale to
+     *
+     * KYUN ALAG ENDPOINT (show() ke andar nahi): forecast ek Python subprocess uthata hai
+     * aur Open-Meteo se ~35 din ka data laata hai — 2-4 second. Agar ye show() ke andar
+     * hota to har drawer utni der ruk kar khulta, jabki baaki saara detail turant taiyaar
+     * hai. Alag endpoint se drawer pehle khulta hai, forecast baad mein aa kar bharti hai.
+     *
+     * IMANDAARI: response ka `model` block model ke ASLI numbers le kar jaata hai —
+     * macro-F1, RED recall, aur BASELINE ka number bhi. UI unhe dikhata hai.
+     * Ye model abhi trivial baseline ke barabar hai (ml/FORECAST_README.md), aur wo
+     * baat officer se chhupani nahi hai.
+     */
+    public function forecast(int $id, ForecastService $service): JsonResponse
+    {
+        $village = Village::find($id);
+
+        if ($village === null) {
+            return response()->json(['message' => "Gaon id {$id} nahi mila."], 404);
+        }
+
+        $result = $service->forecast($id);
+
+        if (! ($result['ok'] ?? false)) {
+            // 503 (not 500): model/Python missing ya Open-Meteo down — ye temporary hai
+            // aur dashboard ko pata hona chahiye ki dobara try karna theek hai.
+            return response()->json([
+                'message' => $result['error'] ?? 'Forecast abhi uplabdh nahi.',
+                'village' => ['id' => $village->id, 'name' => $village->name],
+            ], 503);
+        }
+
+        return response()->json([
+            'village' => ['id' => $village->id, 'name' => $village->name, 'district' => $village->district],
+            'forecast' => $result['forecast'],
+            'model' => $result['model'],
+        ]);
+    }
+
     public function show(Request $request, int $id): JsonResponse
     {
         $detail = $this->riskMap->village(
