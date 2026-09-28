@@ -56,6 +56,11 @@ mockup*.html
 # Data honesty notes (kya real hai, kya representative)
 data/DATA_NOTES.md
 
+# Teammate ke liye banayi gayi review list — ismein saaf likha hai ki kaunse river
+# thresholds abhi placeholder hain aur kaunse missing. Ye internal kaam ki baat hai,
+# public repo mein nahi jaani chahiye.
+VILLAGE_LIST.md
+
 # ---- ML weights — GitHub pe nahi -------------------------------------------
 # sar_unet.pth 93 MB ka hai. GitHub 100 MB pe hard-block karta hai aur 50 MB pe warn,
 # aur git history se bada file kabhi nikalta nahi — ek baar chala gaya to repo hamesha
@@ -78,3 +83,6 @@ dist/
 .idea/
 .vscode/
 *.swp
+
+# Vercel CLI link (project id) — local only
+.vercel

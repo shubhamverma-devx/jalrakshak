@@ -22,11 +22,12 @@ object Config {
      * ASLI DEVICE PE: 10.0.2.2 kaam nahi karega. Tab laptop ka LAN IP daalo
      * (jaise http://192.168.1.5:8000/api) — dono ek hi wifi pe hone chahiye.
      *
-     * DROPLET PE (Day 4): https://jalrakshak.<domain>/api — aur tab
-     * network_security_config.xml ki cleartext chhoot ki zaroorat hi nahi rahegi.
+     * PRODUCTION (ab yahi hai): Railway pe deployed API, HTTPS. Emulator aur asli phone
+     * dono pe chalta hai. Local backend se test karna ho to upar wala 10.0.2.2 wapas daalo.
+     * Railway account badla (deploy/RECOVERY.md) to sirf ye line badlo aur APK dobara banao.
      * =============================================================================
      */
-    const val API_BASE_URL = "http://10.0.2.2:8000/api/"
+    const val API_BASE_URL = "https://api-production-6f20.up.railway.app/api/"
 
     /**
      * Risk kitni der mein khud refresh ho (milliseconds).

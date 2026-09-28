@@ -6,6 +6,25 @@
                          └─ public/fallback/*.json  (API gira ho to bhi replay + satellite chalte hain)
 ```
 
+## Abhi kahan chal raha hai (28 Sept 2026)
+
+| cheez | URL |
+|---|---|
+| **Dashboard (SIH portal pe yahi)** | https://jalrakshak-beta.vercel.app |
+| API | https://api-production-6f20.up.railway.app/api |
+| Health | https://api-production-6f20.up.railway.app/api/health |
+| Uptime check | GitHub Actions -> `uptime` workflow (har 15 min, fail pe email) |
+
+API band ho jaaye -> **`deploy/RECOVERY.md`**.
+
+**Deploy kaise hota hai (asli, testing ke baad):**
+- **API:** repo root se `railway up --service api --detach`. GitHub push se Railway
+  auto-deploy **nahi** hota (CLI se bani service repo se connected nahi hai).
+  `railway redeploy` mat use karo — wo purana upload dobara banata hai.
+  Service pe `RAILWAY_DOCKERFILE_PATH=backend/Dockerfile` variable zaroori hai.
+- **Dashboard:** `git push` -> Vercel khud deploy karta hai (project Root Directory =
+  `dashboard`). Ya repo root se `vercel deploy --prod --yes`.
+
 | file | kaam |
 |---|---|
 | `railway.json` (repo root) | Railway ko batata hai: `backend/Dockerfile` se build, `/api/health` healthcheck, crash pe restart |
