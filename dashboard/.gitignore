@@ -28,3 +28,5 @@ dist-ssr
 # ke saath consistent rehne ke liye ignore kar rahe hain. Bina .env ke bhi app chalta hai —
 # src/config.js mein localhost:8000 ka fallback hai.
 .env
+.vercel
+.env*.local

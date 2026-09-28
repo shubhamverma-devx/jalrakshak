@@ -1,0 +1,39 @@
+# =============================================================================
+#  Uptime check — Railway API zinda hai ya nahi (har 15 min)
+# =============================================================================
+#  KYUN GitHub Actions: koi naya account/API key nahi chahiye. Scheduled run FAIL ho to
+#  GitHub khud email karta hai (Settings > Notifications > Actions > "Only notify for
+#  failed workflows" — default ON). Railway ka credit khatam hote hi yahi pehla signal hai.
+#
+#  URL repo ke Actions variable `API_HEALTH_URL` se aata hai (Settings > Secrets and
+#  variables > Actions > Variables). Naye Railway account pe move karo to sirf wo badlo.
+#
+#  NOTE: GitHub 60 din tak repo mein koi activity na ho to scheduled workflows band kar
+#  deta hai (email bhi aata hai). Tab Actions tab mein "Enable workflow" dabao.
+# =============================================================================
+name: uptime
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch: {}
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: GET /api/health
+        env:
+          URL: ${{ vars.API_HEALTH_URL }}
+        run: |
+          if [ -z "$URL" ]; then echo "API_HEALTH_URL variable set nahi hai"; exit 1; fi
+          # 3 koshish — ek network hichki pe email na aaye.
+          for i in 1 2 3; do
+            code=$(curl -s -o body.json -m 20 -w '%{http_code}' "$URL" || true)
+            echo "attempt $i: HTTP $code"; cat body.json 2>/dev/null; echo
+            [ "$code" = "200" ] && exit 0
+            sleep 20
+          done
+          echo "::error::JalRakshak API down (HTTP $code) — deploy/RECOVERY.md dekho"
+          exit 1
