@@ -107,7 +107,7 @@ function ReliefCard({ r, onStatus, busy, full }) {
   )
 }
 
-export default function ReliefPanel({ relief, loading, onStatus, style }) {
+export default function ReliefPanel({ relief, loading, unavailable, onStatus, style }) {
   const [filter, setFilter] = useState(null)
   const [busyId, setBusyId] = useState(null)
   const [showAll, setShowAll] = useState(false)
@@ -159,6 +159,12 @@ export default function ReliefPanel({ relief, loading, onStatus, style }) {
         </div>
       ))}
     </div>
+  ) : unavailable ? (
+    // Server nahi mila — "No relief requests yet" likhna jhooth hota (ho sakta hai SOS
+    // pade hon, bas dikh nahi rahe). Relief ka koi baked copy nahi: ye live data hai.
+    <Empty Icon={IconLifebuoy}>
+      Relief requests are live data and need the server, which is unreachable right now.
+    </Empty>
   ) : shown.length === 0 ? (
     <Empty Icon={IconLifebuoy}>
       {total === 0

@@ -7,8 +7,9 @@
  *  Laravel 12 mein app/Console/Kernel.php nahi hota — scheduling ab yahan hoti hai.
  *  (BUILD_PLAN "Kernel mein schedule karo" isi jagah ko keh raha hai, sirf naam badla hai.)
  *
- *  Server pe ek hi cron entry chahiye:
- *      * * * * * cd /var/www/jalrakshak/backend && php artisan schedule:run >> /dev/null 2>&1
+ *  Server pe ek hi cron entry chahiye (deploy/cron.d/jalrakshak — flock ke saath, taaki
+ *  schedule:run khud bhi kabhi dhed na lage):
+ *      * * * * * www-data flock -n /tmp/jr-schedule.lock php /var/www/jalrakshak/backend/artisan schedule:run
  * =====================================================================================
  */
 
@@ -27,9 +28,14 @@ use Illuminate\Support\Facades\Schedule;
  * withoutOverlapping(): agar Open-Meteo slow ho aur ek run 30 min se zyada le le, to doosra
  * run uske upar nahi chalega — warna dono ek saath DB likhenge aur droplet ki RAM khatam.
  *
- * runInBackground(): scheduler ka main process free rehta hai.
+ * runInBackground() JAAN-BUJH KE NAHI: foreground mein chalne se cron ka `flock` + `timeout 25m`
+ * (deploy/cron.d/jalrakshak) poore run ko dhakta hai. Background mein risk:compute un dono
+ * ke bahar nikal jaata. Schedule mein aur koi task nahi, to block hona koi nuksaan nahi.
  */
 Schedule::command('risk:compute --mode=live')
     ->everyThirtyMinutes()
-    ->withoutOverlapping()
-    ->runInBackground();
+    // 25 = lock ki expiry (minute). Default 24 GHANTE hai: agar koi run OOM-kill ho jaaye
+    // (1GB droplet pe asli khatra) to lock chhoot jaata aur agle 24 ghante ek bhi run
+    // nahi hota — live map chup-chaap purana. 25 min baad lock apne aap mit jaata hai,
+    // aur Open-Meteo ka timeout (3 x 20s) usse kahin chhota hai, to overlap phir bhi nahi.
+    ->withoutOverlapping(25);

@@ -619,3 +619,77 @@ body {
 }
 .relief-card.inprogress .st { background: var(--amber-bg); color: var(--amber); }
 .relief-card.done .st { background: var(--green-bg); color: var(--green); }
+
+/* =====================================================================================
+   B2 FORECAST STRIP — village drawer ka "next 48 hours"
+   Baaki drawer ABHI ka rule-based haal dikhata hai; ye ek hi jagah hai jahan trained
+   model bol raha hai. Isliye iska apna halka container hai (alag dikhna chahiye), aur
+   neeche accuracy ki line HAMESHA rehti hai.
+   ===================================================================================== */
+.fc-wrap {
+  margin: 12px 15px; padding: 11px 12px; background: var(--panel2);
+  border: 1px solid var(--line); border-radius: 8px;
+}
+.fc-head {
+  display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 600;
+  color: var(--ink2); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 9px;
+}
+.fc-head .ti { width: 13px; height: 13px; color: var(--ink3); }
+.fc-tag {
+  margin-left: auto; font-size: 9px; font-weight: 600; letter-spacing: .3px;
+  background: var(--accent-bg); color: var(--accent-2); padding: 2px 6px; border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.fc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.fc-cell {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+  padding: 8px 4px; text-align: center; min-width: 0;
+}
+.fc-when { font-size: 9px; color: var(--ink3); letter-spacing: .4px; font-weight: 600; }
+.fc-level {
+  font-size: 11.5px; font-weight: 700; margin-top: 4px; letter-spacing: .2px;
+  text-transform: uppercase; color: var(--ink2);
+}
+.fc-level.red { color: var(--red); }
+.fc-level.amber { color: var(--amber); }
+.fc-level.green { color: var(--green); }
+.fc-sub { font-size: 10px; color: var(--ink3); margin-top: 3px; font-family: 'JetBrains Mono', monospace; }
+.fc-conf { font-size: 8.5px; color: var(--ink3); margin-top: 3px; letter-spacing: .2px; }
+
+/* Accuracy line — jaan-bujh ke amber, taaki nazar padhe bina chillaye. */
+.fc-note {
+  width: 100%; margin-top: 9px; padding: 7px 8px; background: var(--amber-bg);
+  border: 1px solid var(--amber); border-radius: 6px; color: var(--ink);
+  font-family: inherit; font-size: 10px; line-height: 1.4; text-align: left;
+  display: flex; align-items: flex-start; gap: 6px; cursor: pointer;
+}
+.fc-note .ti { width: 12px; height: 12px; color: var(--amber); flex-shrink: 0; margin-top: 1px; }
+.fc-note .chev { margin-left: auto; transition: transform .18s; color: var(--ink3); }
+.fc-note:hover { filter: brightness(1.06); }
+
+.fc-detail { margin-top: 8px; font-size: 10.5px; }
+.fc-row {
+  display: flex; justify-content: space-between; gap: 8px; padding: 5px 0;
+  border-bottom: 1px solid var(--line); color: var(--ink2);
+}
+.fc-row b { color: var(--ink); font-weight: 600; text-align: right; }
+.fc-row .vs { color: var(--ink3); font-weight: 400; }
+.fc-p { margin-top: 8px; color: var(--ink3); line-height: 1.5; font-size: 10px; }
+.fc-p.strong { color: var(--ink2); }
+
+/* Error patti ke do naram roop (deploy hardening):
+   .warn — Open-Meteo nahi mila (data adhoora, par server theek)
+   .info — server nahi mila, replay bundled copy se chal raha hai (kaam chal raha hai) */
+.errbox.warn { background: var(--amber-bg); border-color: var(--amber); }
+.errbox.warn .ti, .errbox.warn button { color: var(--amber); border-color: var(--amber); }
+.errbox.info { background: var(--panel2); border-color: var(--line2); }
+.errbox.info .ti { color: var(--accent-2); }
+.errbox.info button { color: var(--accent-2); border-color: var(--line2); }
+
+/* Esri tile attribution — shart hai, par design pe haavi na ho. */
+.leaflet-control-attribution {
+  background: color-mix(in srgb, var(--panel) 80%, transparent) !important;
+  color: var(--ink3) !important; font-size: 9px !important;
+}
+.leaflet-control-attribution a { color: var(--ink2) !important; }

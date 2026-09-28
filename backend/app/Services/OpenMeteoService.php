@@ -82,9 +82,15 @@ final class OpenMeteoService
             $lats = implode(',', array_map(fn ($v) => round((float) $v['lat'], 4), $villages));
             $lngs = implode(',', array_map(fn ($v) => round((float) $v['lng'], 4), $villages));
 
+            // Scheduler (CLI) ke paas time hai — lamba timeout + retry. Web request mein ek
+            // visitor ka php-fpm worker Open-Meteo ke intezaar mein nahi baandhna, isliye
+            // chhota timeout aur ek hi koshish. Fail = data_ok:false, UI saaf batata hai.
+            $cli = app()->runningInConsole();
+
             try {
-                $response = Http::timeout(20)
-                    ->retry(2, 500) // network hichki pe do baar aur koshish
+                $response = Http::connectTimeout(5)
+                    ->timeout($cli ? 20 : 6)
+                    ->retry($cli ? 3 : 1, 500, throw: false) // CLI: network hichki pe 2 aur koshish
                     ->get(self::ENDPOINT, [
                         'latitude' => $lats,
                         'longitude' => $lngs,

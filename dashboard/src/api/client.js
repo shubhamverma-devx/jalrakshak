@@ -7,7 +7,7 @@
  * Backend ke response shapes Day 1 mein bane the (docs/ai-context.md dekho).
  */
 
-import { API_URL } from '../config'
+import { API_URL, REQUEST_TIMEOUT_MS } from '../config'
 
 /**
  * request() — ek HTTP call, saaf error ke saath.
@@ -30,11 +30,19 @@ async function request(path, { method = 'GET', body, params, signal } = {}) {
     })
   }
 
+  // Timeout: server atka ho (php-fpm busy, MySQL swap mein) to fetch minuton latak sakta
+  // hai aur screen skeleton pe hi ruki rehti. REQUEST_TIMEOUT_MS ke baad chhod ke fallback
+  // pe jaate hain. Caller ka signal bhi saath chalta hai (component unmount pe abort).
+  // (Purane browser mein AbortSignal.timeout/any nahi hote — tab bina timeout ke chalta hai.)
+  const timeout = AbortSignal.timeout ? AbortSignal.timeout(REQUEST_TIMEOUT_MS) : null
+  const combined =
+    signal && timeout && AbortSignal.any ? AbortSignal.any([signal, timeout]) : signal || timeout || undefined
+
   let res
   try {
     res = await fetch(url, {
       method,
-      signal,
+      signal: combined,
       headers: {
         Accept: 'application/json',
         ...(body ? { 'Content-Type': 'application/json' } : {}),
@@ -42,10 +50,15 @@ async function request(path, { method = 'GET', body, params, signal } = {}) {
       body: body ? JSON.stringify(body) : undefined,
     })
   } catch (err) {
-    // Network hi nahi laga (backend band hai / CORS block). Ye sabse common dev galti hai,
-    // isliye message mein seedha wahi likha hai jo karna chahiye.
-    if (err.name === 'AbortError') throw err
-    throw new Error('API tak nahi pahunch paye. Kya backend chal raha hai? (php artisan serve)')
+    // Caller ne khud abort kiya (unmount) — chup-chaap upar bhejo.
+    if (err.name === 'AbortError' && signal?.aborted) throw err
+    // Baaki sab (network band, CORS, timeout) — dashboard dekhne wale ko samajh aane
+    // layak message. Ye judge bhi padh sakta hai, isliye dev command nahi likhte.
+    throw new Error(
+      err.name === 'TimeoutError' || timeout?.aborted
+        ? 'The server took too long to respond.'
+        : 'Could not reach the JalRakshak server.',
+    )
   }
 
   // 204 No Content — parse karne ko kuch nahi.
@@ -82,6 +95,15 @@ export const getVillages = (mode, day, signal) =>
 export const getVillage = (id, mode, day, signal) =>
   request(`/village/${id}`, { params: { mode, day }, signal })
 
+/**
+ * B2 — ek gaon ka +24h / +48h forecast.
+ * OUTPUT: { village, forecast:{recent, horizons[]}, model:{metrics, baseline, ...} }
+ * NOTE  : ye 2-4 second le sakta hai (Python subprocess + Open-Meteo), isliye drawer
+ *         ise alag se maangta hai — baaki detail ka wait nahi karwaata.
+ *         503 aata hai agar model/Python na mile — UI usko chup-chaap sambhalta hai.
+ */
+export const getVillageForecast = (id, signal) => request(`/village/${id}/forecast`, { signal })
+
 /** Officer ki relief table. OUTPUT: { counts, count, requests[] } */
 export const getRelief = (signal) => request('/relief', { signal })
 
@@ -116,15 +138,32 @@ export const postAlert = (payload) => request('/alert', { method: 'POST', body: 
 /**
  * Bundled SAR sample scenes + model provenance.
  * OUTPUT: { scenes: [{id,label,ground_truth_water_pct,available}], model: {...} }
+ *
+ * NOTE: dashboard ab ise NAHI bulata — Satellite tab `fallback/sar/*.json` se chalta hai
+ * (droplet par PyTorch nahi chal sakta, 1GB RAM). Endpoint local dev ke liye zinda hai.
  */
 export const getSarScenes = (signal) => request('/sar/scenes', { signal })
 
 /**
- * Ek scene pe model chalao.
- * INPUT : scene id
+ * Ek scene pe model chalao (local dev — ml/.venv wale laptop par).
  * OUTPUT: { scene, detection:{flooded_area_sq_km,water_fraction,bounds,...},
  *           geojson, nearest_villages, model }
- * NOTE  : pehli baar ~4 sec (asli inference), uske baad backend cache se instant.
  */
 export const postSarDetect = (scene, signal) =>
   request('/sar/detect', { method: 'POST', body: { scene }, signal })
+
+/**
+ * ============ Static fallback (build ke andar baked JSON) ============
+ * `php artisan dashboard:export-fallback` inhe `public/fallback/` mein likhta hai; Vite
+ * unhe `dist/` mein copy karta hai. Nginx seedha file deta hai — PHP/MySQL band ho tab bhi.
+ *
+ * INPUT : file ka naam ('replay.json', 'sar/India_591317.json')
+ * OUTPUT: parsed JSON | THROWS: Error agar file build mein nahi hai
+ *
+ * KYUN BASE_URL: dashboard kisi sub-path pe deploy ho to bhi sahi file mile.
+ */
+export async function getFallback(name, signal) {
+  const res = await fetch(`${import.meta.env.BASE_URL}fallback/${name}`, { signal })
+  if (!res.ok) throw new Error(`Bundled data missing (${name}).`)
+  return res.json()
+}

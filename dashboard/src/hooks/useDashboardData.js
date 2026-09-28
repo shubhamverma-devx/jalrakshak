@@ -26,7 +26,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { getAlerts, getRelief, getVillages, patchRelief } from '../api/client'
+import { getAlerts, getFallback, getRelief, getVillages, patchRelief } from '../api/client'
 import { POLL_MS } from '../config'
 
 export function useDashboardData(mode) {
@@ -57,22 +57,48 @@ export function useDashboardData(mode) {
         days.slice(1).map((_, i) => getVillages('replay', i + 1, signal)),
       )
 
-      setReplay({ days, snapshots: [first, ...rest], loading: false, error: null })
+      setReplay({ days, snapshots: [first, ...rest], loading: false, error: null, source: 'api' })
     } catch (err) {
-      if (err.name === 'AbortError') return
-      setReplay({ days: [], snapshots: [], loading: false, error: err.message })
+      if (err.name === 'AbortError' && signal?.aborted) return
+
+      // ---- API nahi mili: build ke andar baked replay pe girte hain ----
+      // KYUN: 2022 ka replay data badalta nahi, aur `dashboard:export-fallback` ne wahi
+      // RiskEngine output file mein likha hai. Judge ko blank screen dikhane se behtar hai
+      // wahi data dikhana — aur saaf batana ki ye bundled copy hai (source: 'fallback',
+      // App ek patti dikhata hai).
+      try {
+        const fb = await getFallback('replay.json', signal)
+        setReplay({
+          days: fb.days || [],
+          snapshots: fb.snapshots || [],
+          loading: false,
+          error: null,
+          source: 'fallback',
+          generatedAt: fb.generated_at,
+          apiError: err.message,
+        })
+      } catch (fbErr) {
+        if (fbErr.name === 'AbortError') return
+        setReplay({ days: [], snapshots: [], loading: false, error: err.message })
+      }
     }
   }, [])
 
-  /** loadLive() — Open-Meteo wala abhi ka snapshot. */
+  /**
+   * loadLive() — Open-Meteo wala abhi ka snapshot.
+   *
+   * Fail hone pe PURANA snapshot nahi mitate (agar tha): 5-min refresh ek baar fail ho to
+   * map khaali karne se behtar hai pichhla data + error patti. Live ka koi static fallback
+   * NAHI hai — purani barish ko "live" dikhana jhooth hota.
+   */
   const loadLive = useCallback(async (signal) => {
     setLive((l) => ({ ...l, loading: true, error: null }))
     try {
       const snapshot = await getVillages('live', null, signal)
       setLive({ snapshot, loading: false, error: null })
     } catch (err) {
-      if (err.name === 'AbortError') return
-      setLive({ snapshot: null, loading: false, error: err.message })
+      if (err.name === 'AbortError' && signal?.aborted) return
+      setLive((l) => ({ snapshot: l.snapshot, loading: false, error: err.message }))
     }
   }, [])
 
@@ -86,8 +112,9 @@ export function useDashboardData(mode) {
       const [relief, alerts] = await Promise.all([getRelief(signal), getAlerts(signal)])
       setOps({ relief, alerts, error: null })
     } catch (err) {
-      if (err.name === 'AbortError') return
+      if (err.name === 'AbortError' && signal?.aborted) return
       // Ops fail hone pe poora dashboard mat giraao — map/risk phir bhi kaam ka hai.
+      // Relief/alerts ka koi baked copy nahi: ye live operational data hai, purana dikhana galat.
       setOps((o) => ({ ...o, error: err.message }))
     }
   }, [])

@@ -1,0 +1,39 @@
+# =============================================================================
+#  MySQL low-memory tuning — 1 vCPU / 1 GB droplet (3 Laravel sites share it)
+#  Install: /etc/mysql/mysql.conf.d/zz-lowmem.cnf   (zz = sabse aakhir mein load, jeetega)
+# =============================================================================
+#  KYUN: bina tuning ke MySQL 8 akele ~350-450 MB RSS leta hai (performance_schema
+#  ~150-250 MB, buffer pool 128 MB). 1 GB box pe yahi sabse bada process hai, aur jab
+#  RAM khatam hoti hai to kernel ka OOM-killer sabse bade process ko maarta hai — yaani
+#  MySQL. Site phir chup-chaap 500 deti hai. Target: MySQL ~150-200 MB.
+#
+#  Teeno sites ka data chhota hai (JalRakshak ka poora DB <5 MB). harden.sh install se
+#  pehle asli InnoDB data size print karta hai — agar wo 64 MB se bada nikle to buffer
+#  pool badhana padega.
+# =============================================================================
+[mysqld]
+# Sabse bada ek-akela bachat (~150-250 MB). Sirf diagnostics ke liye hai; is box pe koi
+# use nahi karta.
+performance_schema = OFF
+
+# Data ka hot hissa RAM mein. Default 128M. Teeno sites ka data isse chhota hai.
+innodb_buffer_pool_size = 64M
+innodb_log_buffer_size  = 8M
+
+# Default 151. Har connection ke apne buffers hote hain. php-fpm ke saare workers mila
+# ke ~12 hain (deploy/README.md ka hisaab) + cron + tinker — 30 kaafi se zyada hai.
+max_connections = 30
+
+# Per-connection / cache buffers — MySQL 8 ke defaults 1 GB box ke liye bade hain.
+thread_cache_size      = 4
+table_open_cache       = 400
+table_definition_cache = 400
+tmp_table_size         = 16M
+max_heap_table_size    = 16M
+key_buffer_size        = 8M
+
+# Binary log: MySQL 8 default ON hai aur 30 din tak rakhta hai. Koi replica nahi hai, to
+# ye sirf disk khata hai — hafton unattended chalne par disk bhar sakti hai.
+# (MariaDB par harden.sh ye line hata deta hai — wahan ye option alag hai aur waise bhi
+# default OFF hai.)
+disable_log_bin

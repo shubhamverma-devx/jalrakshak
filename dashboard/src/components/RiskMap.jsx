@@ -26,15 +26,22 @@ const CENTER = [26.3, 92.6]
 const ZOOM = 7
 
 /**
- * Carto ke basemaps — theme ke hisaab se dark/light.
- * KYUN Carto: muted, grey basemap hai. Normal OSM ke rangeen roads/parks ke upar
- * hamare red/amber/green dots gum ho jaate. Yahan map background chup rehta hai
- * aur data bolta hai — yehi mockup ka bhi look hai.
+ * Basemap — Esri ka Dark/Light Gray Canvas, theme ke hisaab se.
+ * KYUN muted canvas: normal OSM ke rangeen roads/parks ke upar hamare red/amber/green dots
+ * gum ho jaate. Yahan map background chup rehta hai aur data bolta hai — mockup ka look.
+ *
+ * KYUN Esri (Carto nahi): pehle Carto ke dark_all/light_all the. Sept 2026 mein Carto ne
+ * bina API key ke tiles band kar diye — har tile par "API KEY REQUIRED" watermark aane
+ * laga (public URL par judge ko wahi dikhta). Esri ke Canvas tiles bina key ke milte hain,
+ * sirf attribution chahiye (neeche TileLayer mein).
+ * NOTE: Esri URL mein {y}/{x} ka order ulta hai ({z}/{y}/{x}) — galti nahi hai.
+ * Tiles fail ho jaayein to bhi dots/polygons render hote hain — map sirf grey dikhega.
  */
 const TILES = {
-  dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-  light: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+  dark: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+  light: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
 }
+const TILE_ATTRIBUTION = 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors'
 
 /**
  * makeIcon() — ek village dot ka Leaflet icon.
@@ -117,13 +124,18 @@ export default function RiskMap({
            jaata tha (pehle screenshot mein title ka "As" dhak gaya tha). Isliye khud add
            karte hain bottom-right pe — wahan sirf khaali map hai (legend bottom-LEFT pe hai). */
         zoomControl={false}
-        attributionControl={false}
+        // Attribution ON: Esri tiles ki shart hai. Chhota sa bottom-right credit.
         style={{ position: 'absolute', inset: 0 }}
       >
         <ZoomControl position="bottomright" />
         {/* key={isDark} — theme badalte hi TileLayer dobara banta hai aur naye tiles aate hain.
             React-leaflet url prop badalne pe apne aap reload nahi karta, isliye key trick. */}
-        <TileLayer key={isDark ? 'dark' : 'light'} url={isDark ? TILES.dark : TILES.light} maxZoom={12} />
+        <TileLayer
+          key={isDark ? 'dark' : 'light'}
+          url={isDark ? TILES.dark : TILES.light}
+          attribution={TILE_ATTRIBUTION}
+          maxZoom={12}
+        />
 
         {/* --- B1: detected water polygons ---
             key={} isliye ki naya scene aane pe Leaflet purani layer reuse na kare —

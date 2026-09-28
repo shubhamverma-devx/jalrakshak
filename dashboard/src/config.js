@@ -43,5 +43,12 @@ export const POLL_MS = {
   ops: 30 * 1000,      // relief requests + alerts — 30 sec
 }
 
+/**
+ * Ek API call ka max intezaar (ms). Iske baad dashboard bundled fallback pe chala jaata hai.
+ * KYUN 8 sec: droplet pe normal response <300ms hai; 8 sec ka matlab server atka hua hai.
+ * Judge ko isse zyada skeleton ghoorne nahi dena.
+ */
+export const REQUEST_TIMEOUT_MS = 8000
+
 /** Replay auto-play mein ek din kitni der dikhe (ms). Mockup mein 950ms tha. */
 export const REPLAY_TICK_MS = 950

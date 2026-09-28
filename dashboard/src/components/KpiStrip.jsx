@@ -45,7 +45,7 @@ function Kpi({ tone, label, value, delta, Icon, loading }) {
   )
 }
 
-export default function KpiStrip({ snapshot, relief, alerts, sessionAlerts, loading, sar }) {
+export default function KpiStrip({ snapshot, relief, alerts, sessionAlerts, loading, sar, opsDown }) {
   /**
    * Satellite mode: KPI strip poori tarah SAR ke numbers dikhata hai.
    *
@@ -144,17 +144,20 @@ export default function KpiStrip({ snapshot, relief, alerts, sessionAlerts, load
         tone="neutral"
         label="Relief requests"
         Icon={IconLifebuoy}
-        loading={!relief}
-        value={num(relief?.count)}
-        delta={`${reliefPending} pending response`}
+        // opsDown: server nahi mila — skeleton hamesha ghoomta rehta, "—" + wajah likho.
+        loading={!relief && !opsDown}
+        value={relief ? num(relief.count) : '—'}
+        delta={relief ? `${reliefPending} pending response` : 'needs the server'}
       />
       <Kpi
         tone="green"
         label="Alerts sent"
         Icon={IconBell}
-        loading={!alerts}
-        value={num(alerts?.count)}
-        delta={sessionAlerts > 0 ? `${sessionAlerts} this session` : 'total dispatched'}
+        loading={!alerts && !opsDown}
+        value={alerts ? num(alerts.count) : '—'}
+        delta={
+          !alerts ? 'needs the server' : sessionAlerts > 0 ? `${sessionAlerts} this session` : 'total dispatched'
+        }
       />
     </div>
   )

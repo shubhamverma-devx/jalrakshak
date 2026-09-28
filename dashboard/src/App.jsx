@@ -22,6 +22,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   IconSatellite,
   IconAlertTriangle,
+  IconInfoCircle,
   IconChartBar,
   IconChartDonut,
   IconChartLine,
@@ -207,8 +208,9 @@ export default function App() {
         onModeChange={handleModeChange}
         isDark={isDark}
         onThemeToggle={toggle}
-        // data_ok false => Open-Meteo se data nahi mila. Badge amber ho jaata hai.
-        liveStale={mode === 'live' && snapshot?.data_ok === false}
+        // data_ok false => Open-Meteo se data nahi mila; live.error => server hi nahi mila.
+        // Dono mein badge amber — hara dot jhooth bolta.
+        liveStale={mode === 'live' && (!!live.error || snapshot?.data_ok === false)}
         onSendAlert={() => setAlertOpen(true)}
         atRiskCount={atRiskCount}
       />
@@ -219,7 +221,44 @@ export default function App() {
       {error && (
         <div className="errbox">
           <IconAlertTriangle className="ti" />
-          <span>{error}</span>
+          <span>
+            {mode === 'live'
+              ? `Live rainfall is unavailable: ${error} Replay 2022 and the Satellite tab still work.`
+              : error}
+          </span>
+          {mode === 'live' && (
+            <button onClick={() => handleModeChange('replay')}>Open Replay 2022</button>
+          )}
+          <button onClick={retry} style={mode === 'live' ? { marginLeft: 0 } : undefined}>
+            Retry
+          </button>
+        </div>
+      )}
+
+      {/* Open-Meteo down / rate-limited: backend chal raha hai par barish nahi mili.
+          Dots GREEN dikhenge (koi barish nahi = koi rule fire nahi) — isliye saaf likhna
+          zaroori hai ki ye "sab safe" nahi, "data nahi mila" hai. */}
+      {!error && mode === 'live' && snapshot?.data_ok === false && (
+        <div className="errbox warn">
+          <IconAlertTriangle className="ti" />
+          <span>
+            Open-Meteo did not respond (down or rate-limited), so live rainfall is missing and
+            the map below is not a real all-clear. It will refresh automatically.
+          </span>
+          <button onClick={() => handleModeChange('replay')}>Open Replay 2022</button>
+        </div>
+      )}
+
+      {/* Server nahi mila, replay build ke andar ki copy se chal raha hai (D14 imandaari:
+          source chhupana nahi). Sirf replay mode mein — satellite waise bhi static hai. */}
+      {!error && mode === 'replay' && replay.source === 'fallback' && (
+        <div className="errbox info">
+          <IconInfoCircle className="ti" />
+          <span>
+            Server unreachable: showing the bundled copy of the Assam 2022 replay
+            {replay.generatedAt ? ` (exported ${replay.generatedAt.slice(0, 10)})` : ''}. Same
+            RiskEngine output; relief requests and sending alerts need the server.
+          </span>
           <button onClick={retry}>Retry</button>
         </div>
       )}
@@ -229,6 +268,7 @@ export default function App() {
         relief={ops.relief}
         alerts={ops.alerts}
         sessionAlerts={sessionAlerts}
+        opsDown={!!ops.error}
         loading={loading || !snapshot}
         // Satellite mode mein KPI strip SAR ke numbers dikhata hai.
         // KYUN: us tab pe "Danger zones 0" (live risk se) irrelevant aur confusing hai —
@@ -250,6 +290,7 @@ export default function App() {
                 running={sar.running}
                 result={sar.result}
                 error={sar.error}
+                precomputedAt={sar.precomputedAt}
               />
             </Panel>
           ) : (
@@ -327,6 +368,7 @@ export default function App() {
           <ReliefPanel
             relief={ops.relief}
             loading={!ops.relief && !ops.error}
+            unavailable={!ops.relief && !!ops.error}
             onStatus={handleReliefStatus}
             style={{ flex: '1 1 57%', minHeight: 190 }}
           />

@@ -41,10 +41,14 @@ final class RiskMapService
 
     /**
      * Live risk map ka cache TTL (seconds).
-     * KYUN 900 (15 min): scheduler har 30 min chalta hai. Aadha interval rakha taaki scheduler
-     * ke turant baad wali request ko fresh data mile, aur phir bhi DB pe load na aaye.
+     * KYUN 2400 (40 min): scheduler (`risk:compute`) har 30 min cache flush karke khud
+     * dobara bharta hai. TTL us interval se LAMBA hai, to web request ko lagbhag kabhi thanda
+     * cache nahi milta — matlab dashboard ka request kabhi Open-Meteo ke intezaar mein nahi
+     * atakta (droplet pe php-fpm ke gine-chune worker hain, ek atka = site dheemi).
+     * Pehle 900 tha: tab har 30 min mein 15 min aisa window tha jahan pehla visitor
+     * Open-Meteo ka 20s timeout jhelta. 10 min ki slack ek late scheduler tick ke liye hai.
      */
-    private const CACHE_TTL_LIVE = 900;
+    private const CACHE_TTL_LIVE = 2400;
 
     /**
      * Replay cache TTL — 24 ghante.

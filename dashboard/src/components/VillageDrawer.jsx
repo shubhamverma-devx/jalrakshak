@@ -26,7 +26,8 @@ import {
   IconX,
 } from '@tabler/icons-react'
 import './charts'
-import { getVillage, postAlert } from '../api/client'
+import { getFallback, getVillage, postAlert } from '../api/client'
+import ForecastStrip from './ForecastStrip'
 import { OFFICER_NAME } from '../config'
 import { metres, mm, num, shortDay } from '../utils/format'
 import { levelClass, levelColor, levelLabel } from '../utils/risk'
@@ -74,8 +75,18 @@ export default function VillageDrawer({
 
     getVillage(villageId, mode, mode === 'replay' ? day : null, ac.signal)
       .then((d) => setDetail(d))
-      .catch((err) => {
-        if (err.name !== 'AbortError') onToast({ text: err.message, type: 'error' })
+      .catch(async (err) => {
+        if (ac.signal.aborted) return
+        // Server nahi mila: drawer ko API se sirf shelters chahiye the (risk snapshot se
+        // aata hai). Shelters static hain, isliye build ke andar baked copy se bhar dete
+        // hain — toast tabhi jab wo bhi na mile.
+        try {
+          const all = await getFallback('village_static.json', ac.signal)
+          if (all[villageId]) setDetail(all[villageId])
+          else throw err
+        } catch {
+          if (!ac.signal.aborted) onToast({ text: err.message, type: 'error' })
+        }
       })
       .finally(() => setLoading(false))
 
@@ -204,6 +215,12 @@ export default function VillageDrawer({
           </div>
         </>
       )}
+
+      {/* --- B2 forecast (agle 48 ghante) ---
+          Reason ke UPAR isliye ki reason + alert button ek saath rehne chahiye — officer
+          wahi padh ke alert bhejta hai. Forecast uske faisle ka sandarbh hai, uska
+          aadhaar nahi (wo model baseline ke barabar hai — ForecastStrip.jsx dekho). */}
+      <ForecastStrip villageId={village.id} />
 
       {/* --- RiskEngine ka Hindi reason — border ka rang level ke hisaab se --- */}
       <div className="dreason hindi" style={{ borderLeftColor: color }}>

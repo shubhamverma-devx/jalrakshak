@@ -1,0 +1,7 @@
+# jr-watchdog — ek baar chalta hai; timer har 2 min uthata hai. (bin/jr-watchdog.sh dekho)
+[Unit]
+Description=JalRakshak watchdog: restart nginx/php-fpm/mysql if down
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/jr-watchdog.sh
