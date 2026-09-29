@@ -125,19 +125,33 @@ fun AlertsScreen(vm: MainViewModel) {
 }
 
 /**
- * formatSentAt() — ISO timestamp -> "21 Aug, 14:00".
+ * formatSentAt() — ISO timestamp -> "21 Aug, 14:00" **phone ke local time mein**.
+ *
  * INPUT: "2026-08-21T14:00:15+00:00" | OUTPUT: chhota readable string
+ *
+ * ============ YE PEHLE TOOTA HUA THA ============
+ * Pehle yahan sirf STRING KAATI jaati thi — `iso.substringAfter('T').take(5)`. Isse
+ * timestamp ka offset (`+00:00`) chup-chaap ignore ho jaata tha, aur UTC ka time seedha
+ * screen pe aa jaata tha.
+ *
+ * Backend UTC mein `sent_at` bhejta hai. Assam IST (+5:30) mein hai. Nateeja: officer
+ * abhi alert bhejta aur app "05:56" dikhati jabki phone pe 11:26 baj rahe hote —
+ * yaani ek abhi ka alert 5.5 ghante purana dikhta. Demo mein ye bilkul toota lagta hai.
+ *
+ * Ab OffsetDateTime se poora parse karke phone ke apne timezone mein badalte hain.
+ * minSdk 26 hai, to java.time bina desugaring seedha available hai.
  */
 private fun formatSentAt(iso: String?): String {
     if (iso == null) return ""
     return runCatching {
-        val date = iso.substringBefore('T')
-        val time = iso.substringAfter('T').take(5)
-        val (_, m, d) = date.split("-")
+        val local = java.time.OffsetDateTime.parse(iso)
+            .atZoneSameInstant(java.time.ZoneId.systemDefault())
         val months = listOf(
             "Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
         )
-        "${d.toInt()} ${months[m.toInt() - 1]}, $time"
+        val hh = local.hour.toString().padStart(2, '0')
+        val mm = local.minute.toString().padStart(2, '0')
+        "${local.dayOfMonth} ${months[local.monthValue - 1]}, $hh:$mm"
     }.getOrDefault(iso)
 }

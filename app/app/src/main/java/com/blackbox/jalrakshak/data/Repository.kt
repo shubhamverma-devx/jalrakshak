@@ -42,6 +42,46 @@ class Repository(context: Context) {
     // --- UI in flows ko observe karti hai (hamesha cache se) --------------------------
     fun observeVillage(villageId: Int) = dao.observeVillage(villageId)
     fun observeAlerts(villageId: Int) = dao.observeAlerts(villageId)
+
+    /**
+     * saveAlertFromPush() — push mein aaya alert SEEDHA local DB mein daal do.
+     *
+     * ============ YE KYUN ZAROORI HAI ============
+     * Pehle push sirf notification dikhata tha; alert local DB mein jaata hi nahi tha.
+     * Alerts tab sirf DB se padhta hai, aur DB `refreshVillage()` se bharta hai jo har
+     * 5 MINUTE pe chalta hai. Nateeja: notification baj jaati thi par Alerts tab khaali
+     * rehta tha — aur notification pe tap karke wahi khaali tab khulta tha. Demo mein
+     * yehi sabse bura dikhta hai.
+     *
+     * Ab push aate hi alert DB mein chala jaata hai, to tab TURANT bhar jaata hai —
+     * aur ye network ke bina bhi kaam karta hai (push aaya matlab data aa gaya, uske
+     * baad server se dobara poochhne ki zaroorat nahi).
+     *
+     * `saveAlerts` REPLACE strategy pe hai, to wahi alert server refresh mein dobara
+     * aaye to duplicate nahi banta — id same hai, row overwrite ho jaati hai.
+     */
+    suspend fun saveAlertFromPush(
+        alertId: Int,
+        villageId: Int,
+        messageHi: String,
+        messageEn: String,
+        sentBy: String,
+        sentAt: String?,
+    ) {
+        if (alertId == 0 || villageId == 0) return
+        dao.saveAlerts(
+            listOf(
+                CachedAlert(
+                    id = alertId,
+                    villageId = villageId,
+                    messageHi = messageHi,
+                    messageEn = messageEn,
+                    sentBy = sentBy.ifBlank { "District Control Room" },
+                    sentAt = sentAt?.ifBlank { null },
+                )
+            )
+        )
+    }
     fun observeShelters(villageId: Int) = dao.observeShelters(villageId)
 
     /**

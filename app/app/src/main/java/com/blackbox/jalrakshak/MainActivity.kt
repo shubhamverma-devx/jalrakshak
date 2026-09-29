@@ -34,6 +34,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +42,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blackbox.jalrakshak.core.Config
 import com.blackbox.jalrakshak.core.Lang
@@ -164,6 +168,30 @@ private enum class Tab { HOME, ALERTS }
 @Composable
 private fun JalRakshakApp(openAlerts: Boolean, onAlertsOpened: () -> Unit) {
     val vm: MainViewModel = viewModel()
+
+    /*
+     * ============ APP FOREGROUND MEIN AAYE TO REFRESH ============
+     * MainViewModel har 5 MINUTE pe refresh karta hai. Iska matlab tha ki officer alert
+     * bheje aur user turant app khole, to use PURANA data dikhta — alert 5 minute tak
+     * Alerts tab mein nahi aata tha. Demo mein judge notification pe tap karta aur
+     * khaali tab dekhta.
+     *
+     * Push aane par alert ab local DB mein turant save hota hai (Repository ka
+     * saveAlertFromPush), par wo tab hi chalta hai jab push DEVICE TAK pahunche. Emulator
+     * pe FCM ka socket kabhi-kabhi so jaata hai. Isliye ye doosri, seedhi guarantee:
+     * app screen pe aate hi server se taaza alerts aa jaate hain.
+     *
+     * DisposableEffect + ON_RESUME: har baar app foreground mein aane pe chalta hai,
+     * sirf pehli baar nahi (LaunchedEffect wo nahi karta).
+     */
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) vm.refresh()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     val villageId by vm.villageId.collectAsStateSafe()
     val prefsLoaded by vm.prefsLoaded.collectAsStateSafe()

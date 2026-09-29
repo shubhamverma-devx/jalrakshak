@@ -99,12 +99,38 @@ class JalRakshakMessagingService : FirebaseMessagingService() {
 
         if (body.isBlank()) return
 
-        showNotification(
-            title = title,
-            body = body,
-            alertId = data[Config.EXTRA_ALERT_ID]?.toIntOrNull() ?: 0,
-            villageId = data[Config.EXTRA_VILLAGE_ID]?.toIntOrNull() ?: 0,
-        )
+        val alertId = data[Config.EXTRA_ALERT_ID]?.toIntOrNull() ?: 0
+        val villageId = data[Config.EXTRA_VILLAGE_ID]?.toIntOrNull() ?: 0
+
+        showNotification(title = title, body = body, alertId = alertId, villageId = villageId)
+
+        /*
+         * Notification dikhane ke SAATH alert local DB mein bhi daal do.
+         *
+         * KYUN: Alerts tab sirf local DB se padhta hai. Pehle yahan sirf notification
+         * dikhti thi, to tab agle 5-minute refresh tak khaali rehta tha — aur
+         * notification pe tap karne se wahi khaali tab khulta tha.
+         *
+         * Yahan network call NAHI karte, push ke data se hi row banate hain — isse ye
+         * offline bhi chalta hai (push aa gaya matlab data aa gaya).
+         */
+        scope.launch {
+            try {
+                Repository(applicationContext).saveAlertFromPush(
+                    alertId = alertId,
+                    villageId = villageId,
+                    messageHi = data["message_hi"].orEmpty(),
+                    messageEn = data["message_en"].orEmpty(),
+                    sentBy = data["sent_by"].orEmpty(),
+                    sentAt = data["sent_at"],
+                )
+                Log.i(TAG, "Alert $alertId local DB mein save ho gaya")
+            } catch (e: Exception) {
+                // Save fail ho to notification phir bhi dikh chuki hai — wo zyada zaroori
+                // hai. Agla refresh alert ko server se le aayega.
+                Log.w(TAG, "Alert local DB mein save nahi hua: ${e.message}")
+            }
+        }
     }
 
     /**
